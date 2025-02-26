@@ -11,5 +11,17 @@ public enum BotSubState {
     BATTERIES_SLOTS,
     PORTS,
     PORT_HOLDERS_SLOTS,
-    MODULES;
+    MODULES,
+    // Memory
+    MEMORY1,
+    MEMORY2,
+    MEMORY3,
+    MEMORY4,
+    MEMORY5,
+    // SIMON SAYS
+    SIMONSAYS1,
+    SIMONSAYS2,
+    SIMONSAYS3,
+    SIMONSAYS4,
+    SIMONSAYS5;
 }

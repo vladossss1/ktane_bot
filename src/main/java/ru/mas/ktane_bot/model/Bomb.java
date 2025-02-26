@@ -52,4 +52,12 @@ public class Bomb {
     public void solveModule() {
         solvedModulesCount++;
     }
+
+    public void addMistake() {
+        errorsCount++;
+    }
+
+    public boolean isDone() {
+        return modulesCount == solvedModulesCount;
+    }
 }

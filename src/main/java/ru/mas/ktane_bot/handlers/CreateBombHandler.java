@@ -11,11 +11,10 @@ import ru.mas.ktane_bot.model.PortType;
 import java.util.List;
 
 @Component
-public class CreateBombHandler implements Handler {
-    private final UserDataCache userDataCache;
+public class CreateBombHandler extends Handler {
 
     public CreateBombHandler(UserDataCache userDataCache) {
-        this.userDataCache = userDataCache;
+        super(userDataCache);
     }
 
     @Override

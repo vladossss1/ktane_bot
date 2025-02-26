@@ -8,8 +8,7 @@ import ru.mas.ktane_bot.handlers.Handler;
 import java.util.List;
 
 @Component
-public class WiresSolver implements Handler {
-    private final UserDataCache userDataCache;
+public class WiresSolver extends Handler {
     private List<Character> wires;
     private static final String FIRST = "Первый";
     private static final String SECOND = "Второй";
@@ -20,7 +19,7 @@ public class WiresSolver implements Handler {
     private static final String LAST_RED = "Последний красный";
 
     public WiresSolver(UserDataCache userDataCache) {
-        this.userDataCache = userDataCache;
+        super(userDataCache);
     }
 
     @Override
