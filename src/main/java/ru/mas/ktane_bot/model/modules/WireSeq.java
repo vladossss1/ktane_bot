@@ -8,6 +8,7 @@ public class WireSeq extends BombModule {
     private int blueCount = 0;
     private int redCount = 0;
     private int blackCount = 0;
+    private int stateCount = 0;
 
     public int getRedCount() {
         return redCount++;
@@ -17,5 +18,8 @@ public class WireSeq extends BombModule {
     }
     public int getBlackCount() {
         return blackCount++;
+    }
+    public int getStateCount() {
+        return stateCount++;
     }
 }

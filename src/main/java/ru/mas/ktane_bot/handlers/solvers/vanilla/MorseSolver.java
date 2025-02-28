@@ -1,12 +1,10 @@
-package ru.mas.ktane_bot.handlers.solvers;
+package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
-import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.cache.UserDataCache;
 import ru.mas.ktane_bot.handlers.Handler;
 import ru.mas.ktane_bot.model.modules.Morse;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MorseSolver extends Handler {
 

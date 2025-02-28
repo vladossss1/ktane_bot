@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.handlers.solvers;
+package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
 import ru.mas.ktane_bot.cache.UserDataCache;
 import ru.mas.ktane_bot.handlers.Handler;
@@ -17,7 +17,7 @@ public class CompWiresSolver extends Handler {
 
     @Override
     public String handle(String message, Long userId) {
-        if (message.equals("стоп")){
+        if (message.equals("stop")){
             userDataCache.solveModule(userId);
             return "Решено";
         }

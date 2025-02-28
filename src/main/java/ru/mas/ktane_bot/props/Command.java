@@ -18,4 +18,8 @@ public interface Command {
     String COMPWIRES = "/compwires";
     String WIRESEQ = "/seqwires";
     String KNOBS = "/knobs";
+    String CANCEL_MODULE = "/cancelmodule";
+    String CANCEL_BOMB = "/cancelbomb";
+    String EMOJI_MATH = "/emojimath";
+    String CRAZY_TALK = "/crazytalk";
 }

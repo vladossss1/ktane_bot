@@ -1,6 +1,5 @@
 package ru.mas.ktane_bot.handlers;
 
-import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.cache.UserDataCache;
 
 public abstract class Handler {

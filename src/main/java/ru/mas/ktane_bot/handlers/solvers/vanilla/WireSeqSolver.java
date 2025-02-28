@@ -1,11 +1,10 @@
-package ru.mas.ktane_bot.handlers.solvers;
+package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
 import ru.mas.ktane_bot.cache.UserDataCache;
 import ru.mas.ktane_bot.handlers.Handler;
 import ru.mas.ktane_bot.model.modules.WireSeq;
 
 import java.util.List;
-import java.util.Map;
 
 public class WireSeqSolver extends Handler {
 
@@ -55,21 +54,23 @@ public class WireSeqSolver extends Handler {
     @Override
     public String handle(String message, Long userId) {
         var module = (WireSeq) userDataCache.getUserModule(userId);
-        if (message.equals("stop")){
-            userDataCache.solveModule(userId);
-            return "Решено";
-        }
+        String result;
         if (message.length() == 2)
-            return calculateCut(message.charAt(0), message.charAt(1), module);
-         else if (message.length() == 4)
-            return calculateCut(message.charAt(0), message.charAt(1), module) + " "
+            result = calculateCut(message.charAt(0), message.charAt(1), module);
+        else if (message.length() == 4)
+            result = calculateCut(message.charAt(0), message.charAt(1), module) + " "
                     + calculateCut(message.charAt(2), message.charAt(3), module);
         else if (message.length() == 6)
-            return calculateCut(message.charAt(0), message.charAt(1), module) + " "
+            result = calculateCut(message.charAt(0), message.charAt(1), module) + " "
                     + calculateCut(message.charAt(2), message.charAt(3), module) + " "
                     + calculateCut(message.charAt(4), message.charAt(5), module);
+        else
+            result = "Дальше";
 
-        return null;
+        if (module.getStateCount() == 3)
+            userDataCache.solveModule(userId);
+
+        return result;
     }
 
     private String calculateCut(char color, char letter, WireSeq module) {

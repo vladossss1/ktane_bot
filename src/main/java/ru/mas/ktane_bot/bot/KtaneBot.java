@@ -11,7 +11,11 @@ import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.UserDataCache;
 import ru.mas.ktane_bot.handlers.CreateBombHandler;
 import ru.mas.ktane_bot.handlers.Handler;
-import ru.mas.ktane_bot.handlers.solvers.*;
+import ru.mas.ktane_bot.handlers.solvers.mods.easy.CrazyTalkSolver;
+import ru.mas.ktane_bot.handlers.solvers.mods.easy.EmojiMathSolver;
+import ru.mas.ktane_bot.handlers.solvers.vanilla.*;
+import ru.mas.ktane_bot.handlers.solvers.vanilla.needy.KnobsSolver;
+import ru.mas.ktane_bot.model.modules.CrazyTalk;
 import ru.mas.ktane_bot.model.modules.WireSeq;
 
 import static ru.mas.ktane_bot.props.Command.*;
@@ -43,6 +47,17 @@ public class KtaneBot extends TelegramLongPollingBot {
         if (message.startsWith(KNOBS)) {
             handleModule(new KnobsSolver(userDataCache), message, userId);
             return;
+        }
+
+        if (message.equals(CANCEL_MODULE)) {
+            userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
+            userDataCache.saveUserModule(userId, null);
+        }
+
+        if (message.equals(CANCEL_BOMB)) {
+            userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
+            userDataCache.saveUserModule(userId, null);
+            userDataCache.saveUserBomb(userId, null);
         }
 
         if (message.equals(MISTAKE) && userDataCache.hasBomb(userId)) {
@@ -96,6 +111,12 @@ public class KtaneBot extends TelegramLongPollingBot {
             case WIRESEQ:
                 handleModule(new WireSeqSolver(userDataCache), message, userId);
                 break;
+            case EMOJIMATH:
+                handleModule(new EmojiMathSolver(userDataCache), message, userId);
+                break;
+            case CRAZYTALK:
+                handleModule(new CrazyTalkSolver(userDataCache), message, userId);
+                break;
             case DEFAULT:
                 switch (message) {
                     case NEWBOMB:
@@ -129,7 +150,7 @@ public class KtaneBot extends TelegramLongPollingBot {
                     case SIMON_SAYS:
                         userDataCache.setUsersCurrentBotState(userId, BotState.SIMONSAYS);
                         sendMessage(userId, "Вводите в каждом этапе цвет (пример: g - зеленый, y- желтый)," +
-                                " если этапы кончились напишите стоп");
+                                " если этапы кончились напишите stop");
                         break;
                     case MORSE:
                         userDataCache.setUsersCurrentBotState(userId, BotState.MORSE);
@@ -154,15 +175,24 @@ public class KtaneBot extends TelegramLongPollingBot {
                     case WIRESEQ:
                         userDataCache.setUsersCurrentBotState(userId, BotState.WIRESEQ);
                         userDataCache.saveUserModule(userId, new WireSeq());
-                        sendMessage(userId, "Вводите по 1-3 проводам в формате darbbc, где\n" +
-                                "d - черный, b - синий, r - красный, a - A, b - Б, c - В");
+                        sendMessage(userId, "Вводите по 0-3 проводам в формате darbbc, где\n" +
+                                "d - черный, b - синий, r - красный, a - A, b - Б, c - В, если проводов нет, то _");
+                        break;
+                    case EMOJI_MATH:
+                        userDataCache.setUsersCurrentBotState(userId, BotState.EMOJIMATH);
+                        sendMessage(userId, "Введите выражение:");
+                        break;
+                    case CRAZY_TALK:
+                        userDataCache.setUsersCurrentBotState(userId, BotState.CRAZYTALK);
+                        userDataCache.saveUserModule(userId, new CrazyTalk());
+                        sendMessage(userId, "Введите первое слово");
                         break;
                 }
         }
-        if (userDataCache.getUsersCurrentBotState(userId).equals(BotState.DEFAULT) && userDataCache.hasBomb(userId) && userDataCache.getUserBomb(userId).isDone()) {
-            userDataCache.saveUserBomb(userId, null);
-            sendMessage(userId, "Бомба решена, ура!");
-        }
+//        if (userDataCache.getUsersCurrentBotState(userId).equals(BotState.DEFAULT) && userDataCache.hasBomb(userId) && userDataCache.getUserBomb(userId).isDone()) {
+//            userDataCache.saveUserBomb(userId, null);
+//            sendMessage(userId, "Бомба решена, ура!");
+//        }
     }
 
     @Override
@@ -180,7 +210,7 @@ public class KtaneBot extends TelegramLongPollingBot {
         }
     }
 
-    private void handleModule(Handler handler, String message, Long userId){
+    private void handleModule(Handler handler, String message, Long userId) {
         sendMessage(userId, handler.handle(message, userId));
     }
 }

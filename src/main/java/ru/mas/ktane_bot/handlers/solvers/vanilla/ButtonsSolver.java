@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.handlers.solvers;
+package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.bot.state.BotState;

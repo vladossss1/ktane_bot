@@ -13,5 +13,7 @@ public enum BotState {
     WHOSONFIRST,
     PASSWORD,
     COMPWIRES,
-    WIRESEQ;
+    WIRESEQ,
+    EMOJIMATH,
+    CRAZYTALK;
 }
