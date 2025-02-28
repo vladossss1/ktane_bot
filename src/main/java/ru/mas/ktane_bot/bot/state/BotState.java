@@ -8,5 +8,10 @@ public enum BotState {
     KEYBOARD,
     MEMORY,
     LABYRINTH,
-    SIMONSAYS;
+    SIMONSAYS,
+    MORSE,
+    WHOSONFIRST,
+    PASSWORD,
+    COMPWIRES,
+    WIRESEQ;
 }

@@ -27,19 +27,19 @@ public class CreateBombHandler extends Handler {
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.SERIALNUMBER);
                 return "Введите серийный номер:";
             case SERIALNUMBER:
-                bomb.setSerialNumber(message);
+                bomb.setSerialNumber(message.toUpperCase());
                 userDataCache.saveUserBomb(userId, bomb);
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.LIT_INDICATORS);
-                return "Введите горящие индикаторы через запятую или _ если их нет:";
+                return "Введите горящие индикаторы через пробел или _ если их нет:";
             case LIT_INDICATORS:
                 if (!message.equals("_"))
-                    add_indicators(bomb, message, true);
+                    add_indicators(bomb, message.toUpperCase(), true);
                 userDataCache.saveUserBomb(userId, bomb);
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.UNLIT_INDICATORS);
-                return "Введите негорящие индикаторы через запятую или _ если их нет:";
+                return "Введите негорящие индикаторы через пробел или _ если их нет:";
             case UNLIT_INDICATORS:
                 if (!message.equals("_"))
-                    add_indicators(bomb, message, false);
+                    add_indicators(bomb, message.toUpperCase(), false);
                 userDataCache.saveUserBomb(userId, bomb);
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.D_BATTERIES);
                 return "Введите количество батареек типа D:";
@@ -58,10 +58,10 @@ public class CreateBombHandler extends Handler {
                 bomb.setBatteriesSlotsCount((Integer.parseInt(message)));
                 userDataCache.saveUserBomb(userId, bomb);
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.PORTS);
-                return "Введите порты через запятую (если портов несколько нужно ввести несколько раз) или _ если их нет:";
+                return "Введите порты через пробел (если портов несколько нужно ввести несколько раз) или _ если их нет:";
             case PORTS:
                 if (!message.equals("_"))
-                    add_ports(bomb, message);
+                    add_ports(bomb, message.toUpperCase());
                 userDataCache.saveUserBomb(userId, bomb);
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.PORT_HOLDERS_SLOTS);
                 return "Введите количество держателей для портов:";
@@ -75,20 +75,20 @@ public class CreateBombHandler extends Handler {
                 userDataCache.saveUserBomb(userId, bomb);
                 userDataCache.setUsersCurrentBotSubState(userId, null);
                 userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
-                return "Ваша бомба: " + bomb.toString();
+                return "Ваша бомба: " + bomb;
         }
         return null;
     }
 
     private void add_indicators(Bomb bomb, String message, boolean lit) {
-        var indicators = List.of(message.split(","));
+        var indicators = List.of(message.split(" "));
         for (var indicator: indicators) {
             bomb.addIndicator(new Indicator(indicator, lit));
         }
     }
 
     private void add_ports(Bomb bomb, String message) {
-        var ports = List.of(message.split(","));
+        var ports = List.of(message.split(" "));
         for (var port: ports) {
             bomb.addPort(PortType.get(port));
         }

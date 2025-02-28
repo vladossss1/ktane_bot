@@ -12,4 +12,10 @@ public interface Command {
     String MISTAKE = "/mistake";
     String SOLVE = "/solve";
     String SIMON_SAYS = "/simonsays";
+    String MORSE = "/morse";
+    String WHOSONFIRST = "/whosonfirst";
+    String PASSWORD = "/password";
+    String COMPWIRES = "/compwires";
+    String WIRESEQ = "/seqwires";
+    String KNOBS = "/knobs";
 }

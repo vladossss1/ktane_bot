@@ -26,14 +26,12 @@ public class WiresSolver extends Handler {
     public String handle(String message, Long userId) {
         wires = message.chars().mapToObj(c -> (char)c).toList();
         var bomb = userDataCache.getUserBomb(userId);
-        bomb.solveModule();
-        userDataCache.saveUserBomb(userId, bomb);
-        userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
+        userDataCache.solveModule(userId);
         switch (wires.size()) {
             case 3:
                 if (!wires.contains('r'))
                     return SECOND;
-                else if (lastWire('w') && !moreThanOneWire('b'))
+                else if (lastWire('w') || !moreThanOneWire('b'))
                     return LAST;
                 else
                     return LAST_BLUE;

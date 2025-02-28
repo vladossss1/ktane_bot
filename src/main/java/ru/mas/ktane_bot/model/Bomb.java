@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Getter
@@ -32,9 +33,9 @@ public class Bomb {
 
     private int modulesCount;
 
-    private int solvedModulesCount;
+    private int solvedModulesCount = 0;
 
-    private int errorsCount;
+    private int errorsCount = 0;
 
     public void addIndicator(Indicator indicator) {
         indicators.add(indicator);
@@ -59,5 +60,9 @@ public class Bomb {
 
     public boolean isDone() {
         return modulesCount == solvedModulesCount;
+    }
+
+    public boolean serialHasVowel() {
+        return Pattern.compile("[aeiou]", Pattern.CASE_INSENSITIVE).matcher(serialNumber).find();
     }
 }

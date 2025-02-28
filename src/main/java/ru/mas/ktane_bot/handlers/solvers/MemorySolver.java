@@ -28,7 +28,7 @@ public class MemorySolver extends Handler {
         var subState = userDataCache.getUsersCurrentBotSubState(userId);
         if (userDataCache.getUserModule(userId) != null)
             module = (Memory) userDataCache.getUserModule(userId);
-        var splitted = Arrays.stream(message.split(" ")).toList();
+        var splitted = Arrays.stream(message.split("")).toList();
         switch (subState) {
             case MEMORY1:
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY2);
@@ -50,7 +50,7 @@ public class MemorySolver extends Handler {
                 userDataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY3);
                 switch (splitted.get(0)) {
                     case ONE:
-                        setValueAndPosition(userId, "4", String.valueOf(splitted.subList(1, 4).indexOf("4") + 1));
+                        setValueAndPosition(userId, "4", String.valueOf(splitted.subList(1, 5).indexOf("4") + 1));
                         return "Нажмите на " + FOUR;
                     case TWO, FOUR:
                         setValueAndPosition(userId, splitted.get(Integer.parseInt(module.getPositions().get(0))),
@@ -65,17 +65,17 @@ public class MemorySolver extends Handler {
                 switch (splitted.get(0)) {
                     case ONE:
                         setValueAndPosition(userId, module.getValues().get(1),
-                                String.valueOf(splitted.subList(1, 4).indexOf(module.getValues().get(1))));
+                                String.valueOf(splitted.subList(1, 5).indexOf(module.getValues().get(1))));
                         return "Нажмите на " + module.getValues().get(1);
                     case TWO:
                         setValueAndPosition(userId, module.getValues().get(0),
-                                String.valueOf(splitted.subList(1, 4).indexOf(module.getValues().get(0))));
+                                String.valueOf(splitted.subList(1, 5).indexOf(module.getValues().get(0))));
                         return "Нажмите на " + module.getValues().get(0);
                     case THREE:
                         setValueAndPosition(userId, splitted.get(3), "3");
                         return "Нажмите на " + splitted.get(3);
                     case FOUR:
-                        setValueAndPosition(userId, "4", String.valueOf(splitted.subList(1, 4).indexOf("4") + 1));
+                        setValueAndPosition(userId, "4", String.valueOf(splitted.subList(1, 5).indexOf("4") + 1));
                         return "Нажмите на " + FOUR;
                 }
             case MEMORY4:
@@ -94,12 +94,7 @@ public class MemorySolver extends Handler {
                         return "Нажмите на " + splitted.get(Integer.parseInt(module.getPositions().get(1)));
                 }
             case MEMORY5:
-                userDataCache.setUsersCurrentBotSubState(userId, null);
-                userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
-                userDataCache.saveUserModule(userId, null);
-                var bomb = userDataCache.getUserBomb(userId);
-                bomb.solveModule();
-                userDataCache.saveUserBomb(userId, bomb);
+                userDataCache.solveModule(userId);
                 switch (splitted.get(0)) {
                     case ONE:
                         return "Нажмите на " + module.getValues().get(0);

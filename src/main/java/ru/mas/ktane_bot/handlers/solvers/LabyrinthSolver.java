@@ -12,7 +12,7 @@ public class LabyrinthSolver extends Handler {
 
     private Labyrinth labyrinth = new Labyrinth();
 
-    private final List<List<Integer>> circles = List.of(
+    private static final List<List<Integer>> circles = List.of(
             List.of(6, 17),
             List.of(19, 10),
             List.of(21, 23),
@@ -30,11 +30,11 @@ public class LabyrinthSolver extends Handler {
 
     @Override
     public String handle(String message, Long userId) {
-        var splitted = Arrays.stream(message.split(",")).toList();
+        var splitted = Arrays.stream(message.split(" ")).toList();
 
         for (int i = 0; i < circles.size(); i++) {
-            if (circles.get(i).containsAll(List.of(Arrays.stream(splitted.get(0).split(" ")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get(),
-                    Arrays.stream(splitted.get(1).split(" ")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get()))) {
+            if (circles.get(i).containsAll(List.of(Arrays.stream(splitted.get(0).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get(),
+                    Arrays.stream(splitted.get(1).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get()))) {
                 switch (i) {
                     case 0:
                         loadFirstLabyrinth();
@@ -67,17 +67,14 @@ public class LabyrinthSolver extends Handler {
                 break;
             }
         }
-        labyrinth.setStart(Arrays.stream(splitted.get(2).split(" ")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
-        labyrinth.setDestination(Arrays.stream(splitted.get(3).split(" ")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
+        labyrinth.setStart(Arrays.stream(splitted.get(2).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
+        labyrinth.setDestination(Arrays.stream(splitted.get(3).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
         var passed = new HashSet<LabyrinthVertex>();
         var path = new LinkedList<LabyrinthVertex>();
         labyrinth.getPath(labyrinth.getTable().stream().filter(n -> n.getCoordinate() == labyrinth.getStart()).findAny().get(),
                 labyrinth.getTable().stream().filter(n -> n.getCoordinate() == labyrinth.getDestination()).findAny().get(),
                 passed, path);
-        userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
-        var bomb = userDataCache.getUserBomb(userId);
-        bomb.solveModule();
-        userDataCache.saveUserBomb(userId, bomb);
+        userDataCache.solveModule(userId);
         return buildPath(path);
     }
 
@@ -129,11 +126,11 @@ public class LabyrinthSolver extends Handler {
 
     private void loadFirstLabyrinth() {
         loadLabyrinth(new HashSet<>(Set.of(
-                Set.of(1, 7), Set.of(2, 3), Set.of(4, 10), Set.of(5, 11), Set.of(6, 12),
+                Set.of(1, 7), Set.of(2, 3), Set.of(4, 10), Set.of(5, 11), Set.of(6, 7),
                 Set.of(8, 14), Set.of(8, 9), Set.of(9, 15), Set.of(10, 16), Set.of(12, 13),
-                Set.of(13, 19), Set.of(14, 15), Set.of(16, 22), Set.of(18, 24), Set.of(19, 25),
-                Set.of(20, 26), Set.of(21, 22), Set.of(21, 27), Set.of(22, 23), Set.of(22, 28),
-                Set.of(25, 26), Set.of(26, 27), Set.of(28, 29), Set.of(28, 34), Set.of(31, 32), Set.of(33, 34))));
+                Set.of(13, 19), Set.of(14, 15), Set.of(16, 22), Set.of(18, 19), Set.of(19, 25),
+                Set.of(20, 26), Set.of(21, 22), Set.of(21, 27), Set.of(22, 28),
+                Set.of(25, 31), Set.of(26, 27), Set.of(28, 29), Set.of(28, 34), Set.of(31, 32), Set.of(33, 34))));
     }
 
     private void loadSecondLabyrinth() {

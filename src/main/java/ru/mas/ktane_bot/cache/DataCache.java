@@ -25,4 +25,6 @@ public interface DataCache {
     void saveUserModule(long userId, BombModule module);
 
     boolean hasBomb(long userId);
+
+    void solveModule(long userId);
 }

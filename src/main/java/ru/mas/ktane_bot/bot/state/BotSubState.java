@@ -18,10 +18,13 @@ public enum BotSubState {
     MEMORY3,
     MEMORY4,
     MEMORY5,
-    // SIMON SAYS
-    SIMONSAYS1,
-    SIMONSAYS2,
-    SIMONSAYS3,
-    SIMONSAYS4,
-    SIMONSAYS5;
+    // Who's on first
+    WHOSONFIRST1,
+    WHOSONFIRST2,
+    WHOSONFIRST3,
+    // Password
+    PASSWORD1,
+    PASSWORD2,
+    PASSWORD3,
+    PASSWORD4;
 }

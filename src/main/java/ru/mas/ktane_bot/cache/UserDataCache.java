@@ -69,4 +69,12 @@ public class UserDataCache implements DataCache{
     public boolean hasBomb(long userId) {
         return usersBombs.containsKey(userId);
     }
+
+    @Override
+    public void solveModule(long userId) {
+        setUsersCurrentBotState(userId, BotState.DEFAULT);
+        setUsersCurrentBotSubState(userId, null);
+        saveUserModule(userId, null);
+        getUserBomb(userId).solveModule();
+    }
 }

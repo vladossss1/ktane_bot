@@ -25,13 +25,10 @@ public class KeyboardSolver extends Handler {
     @Override
     public String handle(String message, Long userId) {
         var buttons = new ArrayList<>(Arrays.stream(message.split(" ")).toList());
-        var bomb = userDataCache.getUserBomb(userId);
         for (var column : table) {
             if (column.containsAll(buttons)) {
                 buttons.sort(Comparator.comparingInt(column::indexOf));
-                bomb.solveModule();
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
+                userDataCache.solveModule(userId);
                 return buttons.toString();
             }
         }

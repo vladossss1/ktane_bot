@@ -20,9 +20,7 @@ public class ButtonsSolver extends Handler {
         var splitted = message.split(" ");
         var bomb = userDataCache.getUserBomb(userId);
         var button = new Button(splitted[0], splitted[1]);
-        bomb.solveModule();
-        userDataCache.saveUserBomb(userId, bomb);
-        userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
+        userDataCache.solveModule(userId);
         if (button.getName().equalsIgnoreCase("abort")
                 && button.getColor().equalsIgnoreCase("blue"))
             return HOLD_AND_RELEASE;
