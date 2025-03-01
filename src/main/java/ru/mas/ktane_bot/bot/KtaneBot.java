@@ -11,10 +11,13 @@ import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.UserDataCache;
 import ru.mas.ktane_bot.handlers.CreateBombHandler;
 import ru.mas.ktane_bot.handlers.Handler;
+import ru.mas.ktane_bot.handlers.solvers.mods.easy.BulbSolver;
 import ru.mas.ktane_bot.handlers.solvers.mods.easy.CrazyTalkSolver;
 import ru.mas.ktane_bot.handlers.solvers.mods.easy.EmojiMathSolver;
+import ru.mas.ktane_bot.handlers.solvers.mods.easy.LetterKeysSolver;
 import ru.mas.ktane_bot.handlers.solvers.vanilla.*;
 import ru.mas.ktane_bot.handlers.solvers.vanilla.needy.KnobsSolver;
+import ru.mas.ktane_bot.model.modules.Bulb;
 import ru.mas.ktane_bot.model.modules.CrazyTalk;
 import ru.mas.ktane_bot.model.modules.WireSeq;
 
@@ -39,7 +42,7 @@ public class KtaneBot extends TelegramLongPollingBot {
         var message = update.getMessage().getText();
         var userId = update.getMessage().getChatId();
 
-        if(!userDataCache.hasUser(userId))
+        if (!userDataCache.hasUser(userId))
             userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
 
         var state = userDataCache.getUsersCurrentBotState(userId);
@@ -117,6 +120,12 @@ public class KtaneBot extends TelegramLongPollingBot {
             case CRAZYTALK:
                 handleModule(new CrazyTalkSolver(userDataCache), message, userId);
                 break;
+            case LETTERKEYS:
+                handleModule(new LetterKeysSolver(userDataCache), message, userId);
+                break;
+            case BULB:
+                handleModule(new BulbSolver(userDataCache), message, userId);
+                break;
             case DEFAULT:
                 switch (message) {
                     case NEWBOMB:
@@ -131,7 +140,7 @@ public class KtaneBot extends TelegramLongPollingBot {
                         break;
                     case BUTTON:
                         userDataCache.setUsersCurrentBotState(userId, BotState.BUTTON);
-                        sendMessage(userId,"Введите кнопку (Пример: blue hold)");
+                        sendMessage(userId, "Введите кнопку (Пример: blue hold)");
                         break;
                     case KEYBOARD:
                         userDataCache.setUsersCurrentBotState(userId, BotState.KEYBOARD);
@@ -187,6 +196,16 @@ public class KtaneBot extends TelegramLongPollingBot {
                         userDataCache.saveUserModule(userId, new CrazyTalk());
                         sendMessage(userId, "Введите первое слово");
                         break;
+                    case LETTER_KEYS:
+                        userDataCache.setUsersCurrentBotState(userId, BotState.LETTERKEYS);
+                        sendMessage(userId, "Введите ваше число");
+                        break;
+                    case BULB:
+                        userDataCache.setUsersCurrentBotState(userId, BotState.BULB);
+                        userDataCache.saveUserModule(userId, new Bulb());
+                        sendMessage(userId, "Введите включена ли лампа (on/off)," +
+                                " полупрозрачная она или сплошная (see-through/opaque) и какого она цвета через пробел");
+                        break;
                 }
         }
 //        if (userDataCache.getUsersCurrentBotState(userId).equals(BotState.DEFAULT) && userDataCache.hasBomb(userId) && userDataCache.getUserBomb(userId).isDone()) {
@@ -204,8 +223,7 @@ public class KtaneBot extends TelegramLongPollingBot {
         var sendMessage = new SendMessage(String.valueOf(userId), text);
         try {
             execute(sendMessage);
-        }
-        catch (TelegramApiException e) {
+        } catch (TelegramApiException e) {
             System.out.println("asd");
         }
     }

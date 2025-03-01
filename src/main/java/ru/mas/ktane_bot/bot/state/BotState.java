@@ -15,5 +15,7 @@ public enum BotState {
     COMPWIRES,
     WIRESEQ,
     EMOJIMATH,
-    CRAZYTALK;
+    CRAZYTALK,
+    LETTERKEYS,
+    BULB;
 }

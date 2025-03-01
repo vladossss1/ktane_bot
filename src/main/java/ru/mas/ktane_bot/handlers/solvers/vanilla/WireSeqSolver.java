@@ -6,6 +6,9 @@ import ru.mas.ktane_bot.model.modules.WireSeq;
 
 import java.util.List;
 
+import static ru.mas.ktane_bot.model.modules.CommonValues.CUT;
+import static ru.mas.ktane_bot.model.modules.CommonValues.DONT_CUT;
+
 public class WireSeqSolver extends Handler {
 
     private static final List<List<Character>> red = List.of(
@@ -43,9 +46,6 @@ public class WireSeqSolver extends Handler {
             List.of('c'),
             List.of('c')
     );
-
-    private final static String DONT_CUT = "Не резать";
-    private final static String CUT = "Резать";
 
     public WireSeqSolver(UserDataCache userDataCache) {
         super(userDataCache);

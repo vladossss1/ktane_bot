@@ -9,15 +9,12 @@ import ru.mas.ktane_bot.model.modules.Memory;
 
 import java.util.Arrays;
 
+import static ru.mas.ktane_bot.model.modules.CommonValues.*;
+
 @Component
 public class MemorySolver extends Handler {
 
     private Memory module = new Memory();
-
-    private static final String ONE = "1";
-    private static final String TWO = "2";
-    private static final String THREE = "3";
-    private static final String FOUR = "4";
 
     public MemorySolver(UserDataCache userDataCache) {
         super(userDataCache);

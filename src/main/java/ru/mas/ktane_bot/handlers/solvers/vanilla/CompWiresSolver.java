@@ -6,10 +6,10 @@ import ru.mas.ktane_bot.model.PortType;
 
 import java.util.List;
 
-public class CompWiresSolver extends Handler {
+import static ru.mas.ktane_bot.model.modules.CommonValues.CUT;
+import static ru.mas.ktane_bot.model.modules.CommonValues.DONT_CUT;
 
-    private final static String DONT_CUT = "Не резать";
-    private final static String CUT = "Резать";
+public class CompWiresSolver extends Handler {
 
     public CompWiresSolver(UserDataCache userDataCache) {
         super(userDataCache);
