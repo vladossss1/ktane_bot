@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.handlers.solvers.mods.easy;
+package ru.mas.ktane_bot.handlers.solvers.mods.introduction;
 
 import ru.mas.ktane_bot.cache.UserDataCache;
 import ru.mas.ktane_bot.handlers.Handler;
@@ -27,10 +27,14 @@ public class EmojiMathSolver extends Handler {
     @Override
     public String handle(String message, Long userId) {
         userDataCache.solveModule(userId);
-        for (int i = 0; i < emoji.size() - 1; i++) {
-            message = message.replaceAll(emoji.get(i), String.valueOf(i));
+        var result = new StringBuilder();
+        var chars = message.toCharArray();
+        for (int i = 0; i < chars.length; i += 2) {
+            if (chars[i] == '+' || chars[i] == '-')
+                result.append(chars[i++]);
+            result.append(emoji.indexOf(chars[i] + String.valueOf(chars[i + 1])));
         }
-        var splitted = message.split("[+\\-]");
+        var splitted = result.toString().split("[+\\-]");
         return String.valueOf(message.contains("+") ? Integer.parseInt(splitted[0]) + Integer.parseInt(splitted[1]) :
                 Integer.parseInt(splitted[0]) - Integer.parseInt(splitted[1]));
     }

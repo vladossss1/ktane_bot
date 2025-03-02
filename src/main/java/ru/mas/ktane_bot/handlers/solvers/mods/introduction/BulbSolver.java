@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.handlers.solvers.mods.easy;
+package ru.mas.ktane_bot.handlers.solvers.mods.introduction;
 
 import lombok.SneakyThrows;
 import ru.mas.ktane_bot.cache.UserDataCache;
