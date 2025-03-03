@@ -1,12 +1,18 @@
 package ru.mas.ktane_bot.handlers.solvers.mods.introduction;
 
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.CrazyTalk;
 
 import java.util.Map;
 
-public class CrazyTalkSolver extends Handler {
+@Component
+@RequiredArgsConstructor
+public class CrazyTalkSolver implements Solver {
+
+    private final DataCache dataCache;
 
     private final static Map<String, String> wordMap = Map.<String, String>ofEntries(
             Map.entry("<- <- -> <- -> ->", "5/4"),
@@ -95,15 +101,11 @@ public class CrazyTalkSolver extends Handler {
             Map.entry("FULLSTOP FULLSTOP", "8/4")
     );
 
-    public CrazyTalkSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
-
     @Override
-    public String handle(String message, Long userId) {
-        var module = (CrazyTalk) userDataCache.getUserModule(userId);
+    public String solve(String message, Long userId) {
+        var module = (CrazyTalk) dataCache.getUserModule(userId);
         if (message.equals("_")) {
-            userDataCache.solveModule(userId);
+            dataCache.solveModule(userId);
             return wordMap.get(module.getCurrentWords().get(module.getCurrentWords().indexOf(module.getCurrentResult())));
         }
         if (module.getCurrentWords().isEmpty()) {
@@ -115,11 +117,11 @@ public class CrazyTalkSolver extends Handler {
             module.setCurrentWords(module.getCurrentWords().stream().filter(w -> w.startsWith(module.getCurrentResult())).toList());
         }
         if (module.getCurrentWords().size() == 1) {
-            userDataCache.solveModule(userId);
+            dataCache.solveModule(userId);
             return wordMap.get(module.getCurrentWords().get(0));
         }
         else {
-            userDataCache.saveUserModule(userId, module);
+            dataCache.saveUserModule(userId, module);
             return "Введите следующее слово";
         }
     }

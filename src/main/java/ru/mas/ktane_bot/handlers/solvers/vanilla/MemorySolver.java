@@ -1,34 +1,33 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.bot.state.BotSubState;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.Memory;
 
 import java.util.Arrays;
 
 import static ru.mas.ktane_bot.model.modules.CommonValues.*;
 
-@Component
-public class MemorySolver extends Handler {
+@Component("memorySolver")
+@RequiredArgsConstructor
+public class MemorySolver implements Solver {
 
     private Memory module = new Memory();
 
-    public MemorySolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
+    private final DataCache dataCache;
 
     @Override
-    public String handle(String message, Long userId) {
-        var subState = userDataCache.getUsersCurrentBotSubState(userId);
-        if (userDataCache.getUserModule(userId) != null)
-            module = (Memory) userDataCache.getUserModule(userId);
+    public String solve(String message, Long userId) {
+        var subState = dataCache.getUsersCurrentBotSubState(userId);
+        if (dataCache.getUserModule(userId) != null)
+            module = (Memory) dataCache.getUserModule(userId);
         var splitted = Arrays.stream(message.split("")).toList();
         switch (subState) {
             case MEMORY1:
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY2);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY2);
                 switch (splitted.get(0)) {
                     case ONE, TWO:
                         module = new Memory();
@@ -44,21 +43,21 @@ public class MemorySolver extends Handler {
                         return "Нажмите на " + splitted.get(4);
                 }
             case MEMORY2:
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY3);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY3);
                 switch (splitted.get(0)) {
                     case ONE:
                         setValueAndPosition(userId, "4", String.valueOf(splitted.subList(1, 5).indexOf("4") + 1));
                         return "Нажмите на " + FOUR;
                     case TWO, FOUR:
-                        setValueAndPosition(userId, splitted.get(Integer.parseInt(module.getPositions().get(0))),
-                                module.getPositions().get(0));
-                        return "Нажмите на " + splitted.get(Integer.parseInt(module.getPositions().get(0)));
+                        setValueAndPosition(userId, splitted.get(Integer.parseInt(module.getPositions().getFirst())),
+                                module.getPositions().getFirst());
+                        return "Нажмите на " + splitted.get(Integer.parseInt(module.getPositions().getFirst()));
                     case THREE:
                         setValueAndPosition(userId, splitted.get(1), "1");
                         return "Нажмите на " + splitted.get(1);
                 }
             case MEMORY3:
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY4);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY4);
                 switch (splitted.get(0)) {
                     case ONE:
                         setValueAndPosition(userId, module.getValues().get(1),
@@ -67,7 +66,7 @@ public class MemorySolver extends Handler {
                     case TWO:
                         setValueAndPosition(userId, module.getValues().get(0),
                                 String.valueOf(splitted.subList(1, 5).indexOf(module.getValues().get(0))));
-                        return "Нажмите на " + module.getValues().get(0);
+                        return "Нажмите на " + module.getValues().getFirst();
                     case THREE:
                         setValueAndPosition(userId, splitted.get(3), "3");
                         return "Нажмите на " + splitted.get(3);
@@ -76,12 +75,12 @@ public class MemorySolver extends Handler {
                         return "Нажмите на " + FOUR;
                 }
             case MEMORY4:
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY5);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY5);
                 switch (splitted.get(0)) {
                     case ONE:
-                        setValueAndPosition(userId, splitted.get(Integer.parseInt(module.getPositions().get(0))),
-                                module.getPositions().get(0));
-                        return "Нажмите на " + splitted.get(Integer.parseInt(module.getPositions().get(0)));
+                        setValueAndPosition(userId, splitted.get(Integer.parseInt(module.getPositions().getFirst())),
+                                module.getPositions().getFirst());
+                        return "Нажмите на " + splitted.get(Integer.parseInt(module.getPositions().getFirst()));
                     case TWO:
                         setValueAndPosition(userId, splitted.get(1), "1");
                         return "Нажмите на " + splitted.get(1);
@@ -91,8 +90,8 @@ public class MemorySolver extends Handler {
                         return "Нажмите на " + splitted.get(Integer.parseInt(module.getPositions().get(1)));
                 }
             case MEMORY5:
-                userDataCache.solveModule(userId);
-                switch (splitted.get(0)) {
+                dataCache.solveModule(userId);
+                switch (splitted.getFirst()) {
                     case ONE:
                         return "Нажмите на " + module.getValues().get(0);
                     case TWO:
@@ -109,6 +108,6 @@ public class MemorySolver extends Handler {
     private void setValueAndPosition(Long userId, String value, String position) {
         module.putPosition(position);
         module.putValue(value);
-        userDataCache.saveUserModule(userId, module);
+        dataCache.saveUserModule(userId, module);
     }
 }
