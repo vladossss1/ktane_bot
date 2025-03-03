@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.DataCache;
-import ru.mas.ktane_bot.cache.UserDataCache;
 import ru.mas.ktane_bot.handlers.CreateBombService;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.CrazyTalk;
@@ -25,10 +24,10 @@ public class KtaneBot extends TelegramLongPollingBot {
     private final CreateBombService createBombService;
     private final Map<String, Solver> solverMap;
 
-    public KtaneBot(@Value("${bot.token}") String botToken, UserDataCache userDataCache,
+    public KtaneBot(@Value("${bot.token}") String botToken, DataCache dataCache,
                     CreateBombService createBombService, Map<String, Solver> solverMap) {
         super(botToken);
-        this.dataCache = userDataCache;
+        this.dataCache = dataCache;
         this.createBombService = createBombService;
         this.solverMap = solverMap;
     }
@@ -151,6 +150,7 @@ public class KtaneBot extends TelegramLongPollingBot {
                         sendMessage(userId, "Введите первое слово");
                         break;
                 }
+                break;
             default:
                 sendMessage(userId, solverMap.get(state.getSolverBeanName()).solve(message, userId));
         }
