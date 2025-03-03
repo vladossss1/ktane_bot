@@ -1,14 +1,17 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
-import ru.mas.ktane_bot.bot.state.BotState;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.Labyrinth;
 import ru.mas.ktane_bot.model.modules.LabyrinthVertex;
 
 import java.util.*;
 
-public class LabyrinthSolver extends Handler {
+@Component("labyrinthSolver")
+@RequiredArgsConstructor
+public class LabyrinthSolver implements Solver {
 
     private Labyrinth labyrinth = new Labyrinth();
 
@@ -24,12 +27,10 @@ public class LabyrinthSolver extends Handler {
             List.of(24, 8)
     );
 
-    public LabyrinthSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
+    private final DataCache dataCache;
 
     @Override
-    public String handle(String message, Long userId) {
+    public String solve(String message, Long userId) {
         var splitted = Arrays.stream(message.split(" ")).toList();
 
         for (int i = 0; i < circles.size(); i++) {
@@ -74,7 +75,7 @@ public class LabyrinthSolver extends Handler {
         labyrinth.getPath(labyrinth.getTable().stream().filter(n -> n.getCoordinate() == labyrinth.getStart()).findAny().get(),
                 labyrinth.getTable().stream().filter(n -> n.getCoordinate() == labyrinth.getDestination()).findAny().get(),
                 passed, path);
-        userDataCache.solveModule(userId);
+        dataCache.solveModule(userId);
         return buildPath(path);
     }
 

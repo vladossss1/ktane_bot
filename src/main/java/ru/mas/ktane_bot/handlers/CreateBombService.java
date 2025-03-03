@@ -1,80 +1,79 @@
 package ru.mas.ktane_bot.handlers;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.bot.state.BotSubState;
-import ru.mas.ktane_bot.cache.UserDataCache;
+import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.model.Bomb;
 import ru.mas.ktane_bot.model.Indicator;
 import ru.mas.ktane_bot.model.PortType;
 
 import java.util.List;
 
-@Component
-public class CreateBombHandler extends Handler {
+@Service
+@RequiredArgsConstructor
+public class CreateBombService {
 
-    public CreateBombHandler(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
+    private final DataCache dataCache;
 
-    @Override
-    public String handle(String message, Long userId) {
-        var subState = userDataCache.getUsersCurrentBotSubState(userId);
-        var bomb = userDataCache.getUserBomb(userId);
+    public String createBomb(String message, Long userId) {
+        var subState = dataCache.getUsersCurrentBotSubState(userId);
+        var bomb = dataCache.getUserBomb(userId);
         switch (subState) {
             case BEGINCREATE:
-                userDataCache.saveUserBomb(userId, new Bomb());
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.SERIALNUMBER);
+                dataCache.saveUserBomb(userId, new Bomb());
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.SERIALNUMBER);
                 return "Введите серийный номер:";
             case SERIALNUMBER:
                 bomb.setSerialNumber(message.toUpperCase());
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.LIT_INDICATORS);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.LIT_INDICATORS);
                 return "Введите горящие индикаторы через пробел или _ если их нет:";
             case LIT_INDICATORS:
                 if (!message.equals("_"))
                     add_indicators(bomb, message.toUpperCase(), true);
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.UNLIT_INDICATORS);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.UNLIT_INDICATORS);
                 return "Введите негорящие индикаторы через пробел или _ если их нет:";
             case UNLIT_INDICATORS:
                 if (!message.equals("_"))
                     add_indicators(bomb, message.toUpperCase(), false);
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.D_BATTERIES);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.D_BATTERIES);
                 return "Введите количество батареек типа D:";
             case D_BATTERIES:
                 bomb.setDBatteriesCount((Integer.parseInt(message)));
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.AA_BATTERIES);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.AA_BATTERIES);
                 return "Введите количество батареек типа AA:";
             case AA_BATTERIES:
                 bomb.setAaBatteriesCount((Integer.parseInt(message)));
                 bomb.setBatteriesCount(bomb.getDBatteriesCount() + bomb.getAaBatteriesCount());
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.BATTERIES_SLOTS);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.BATTERIES_SLOTS);
                 return "Введите количество слотов под батарейки:";
             case BATTERIES_SLOTS:
                 bomb.setBatteriesSlotsCount((Integer.parseInt(message)));
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.PORTS);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.PORTS);
                 return "Введите порты через пробел (если портов несколько нужно ввести несколько раз) или _ если их нет:";
             case PORTS:
                 if (!message.equals("_"))
                     add_ports(bomb, message.toUpperCase());
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.PORT_HOLDERS_SLOTS);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.PORT_HOLDERS_SLOTS);
                 return "Введите количество держателей для портов:";
             case PORT_HOLDERS_SLOTS:
                 bomb.setPortHoldersCount((Integer.parseInt(message)));
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.MODULES);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.MODULES);
                 return "Введите количество модулей:";
             case MODULES:
                 bomb.setModulesCount((Integer.parseInt(message)));
-                userDataCache.saveUserBomb(userId, bomb);
-                userDataCache.setUsersCurrentBotSubState(userId, null);
-                userDataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
+                dataCache.saveUserBomb(userId, bomb);
+                dataCache.setUsersCurrentBotSubState(userId, null);
+                dataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
                 return "Ваша бомба: " + bomb;
         }
         return null;

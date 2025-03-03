@@ -1,27 +1,29 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.PortType;
 
 import java.util.List;
 
-public class CompWiresSolver extends Handler {
+@Component("compWiresSolver")
+@RequiredArgsConstructor
+public class CompWiresSolver implements Solver {
 
     private final static String DONT_CUT = "Не резать";
     private final static String CUT = "Резать";
 
-    public CompWiresSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
+    private final DataCache dataCache;
 
     @Override
-    public String handle(String message, Long userId) {
+    public String solve(String message, Long userId) {
         if (message.equals("stop")){
-            userDataCache.solveModule(userId);
+            dataCache.solveModule(userId);
             return "Решено";
         }
-        var bomb = userDataCache.getUserBomb(userId);
+        var bomb = dataCache.getUserBomb(userId);
         var conditions = message.chars().mapToObj(c -> (char) c).toList();
         if (conditions.size() == 4) {
             return DONT_CUT;

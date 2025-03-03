@@ -1,14 +1,18 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.mas.ktane_bot.bot.state.BotState;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
-@Component
-public class KeyboardSolver extends Handler {
+@Component("keyboardSolver")
+@RequiredArgsConstructor
+public class KeyboardSolver implements Solver {
 
     private static final List<String> firstColumn = List.of("зеркало", "ат", "лямбда", "ножницы", "ю", "гроб", "э");
     private static final List<String> secondColumn = List.of("дрон", "зеркало", "э", "свинья", "бзвезда", "гроб", "?");
@@ -18,17 +22,15 @@ public class KeyboardSolver extends Handler {
     private static final List<String> sixthColumn = List.of("z", "дрон", "гантеля", "ае", "трезубец", "треугольник", "омега");
     private static final List<List<String>> table = List.of(firstColumn, secondColumn, thirdColumn, fourthColumn, fifthColumn, sixthColumn);
 
-    public KeyboardSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
+    private final DataCache dataCache;
 
     @Override
-    public String handle(String message, Long userId) {
+    public String solve(String message, Long userId) {
         var buttons = new ArrayList<>(Arrays.stream(message.split(" ")).toList());
         for (var column : table) {
             if (column.containsAll(buttons)) {
                 buttons.sort(Comparator.comparingInt(column::indexOf));
-                userDataCache.solveModule(userId);
+                dataCache.solveModule(userId);
                 return buttons.toString();
             }
         }

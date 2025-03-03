@@ -1,19 +1,26 @@
 package ru.mas.ktane_bot.bot.state;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum BotState {
-    DEFAULT,
-    CREATEBOMB,
-    WIRES,
-    BUTTON,
-    KEYBOARD,
-    MEMORY,
-    LABYRINTH,
-    SIMONSAYS,
-    MORSE,
-    WHOSONFIRST,
-    PASSWORD,
-    COMPWIRES,
-    WIRESEQ,
-    EMOJIMATH,
-    CRAZYTALK;
+    DEFAULT (null),
+    CREATEBOMB (null),
+    WIRES ("wiresSolver"),
+    BUTTON ("buttonsSolver"),
+    KEYBOARD ("keyboardSolver"),
+    MEMORY ("memorySolver"),
+    LABYRINTH ("labyrinthSolver"),
+    SIMONSAYS ("simonSaysSolver"),
+    MORSE ("morseSolver"),
+    WHOSONFIRST ("whosOnFirstSolver"),
+    PASSWORD ("passwordSolver"),
+    COMPWIRES ("compWiresSolver"),
+    WIRESEQ ("wireSeqSolver"),
+    EMOJIMATH ("emojiMathSolver"),
+    CRAZYTALK ("crazyTalkSolver");
+
+    private final String solverBeanName;
 }

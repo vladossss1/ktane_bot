@@ -1,14 +1,20 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.bot.state.BotSubState;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class WhosOnFirstSolver extends Handler {
+@Component("whosOnFirstSolver")
+@RequiredArgsConstructor
+public class WhosOnFirstSolver implements Solver {
+
+    private final DataCache dataCache;
 
     private static final Map<String, Integer> stepOne = Map.ofEntries(
             Map.entry("да", 3), Map.entry("первое", 2), Map.entry("экран", 6),
@@ -54,24 +60,20 @@ public class WhosOnFirstSolver extends Handler {
             Map.entry("что?", List.of("всё", "дальше", "итак", "и так", "чё?", "жми", "пасс", "паз", "пас", "во все", "что?", "че?", "вовсе", "все"))
     );
 
-    public WhosOnFirstSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
-
     @Override
-    public String handle(String message, Long userId) {
+    public String solve(String message, Long userId) {
         var splitted = Arrays.stream(message.split(",")).toList();
-        var subState = userDataCache.getUsersCurrentBotSubState(userId);
+        var subState = dataCache.getUsersCurrentBotSubState(userId);
         switch (subState) {
             case WHOSONFIRST1:
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.WHOSONFIRST2);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.WHOSONFIRST2);
                 break;
             case WHOSONFIRST2:
-                userDataCache.setUsersCurrentBotSubState(userId, BotSubState.WHOSONFIRST3);
+                dataCache.setUsersCurrentBotSubState(userId, BotSubState.WHOSONFIRST3);
                 break;
             case WHOSONFIRST3:
-                userDataCache.setUsersCurrentBotSubState(userId, null);
-                userDataCache.solveModule(userId);
+                dataCache.setUsersCurrentBotSubState(userId, null);
+                dataCache.solveModule(userId);
                 break;
         }
         for (var word: stepTwo.get(splitted.get(stepOne.get(splitted.get(0))))) {

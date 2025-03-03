@@ -1,28 +1,30 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
-import ru.mas.ktane_bot.bot.state.BotState;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.SimonSays;
 
-public class SimonSaysSolver extends Handler {
+@Component("simonSaysSolver")
+@RequiredArgsConstructor
+public class SimonSaysSolver implements Solver {
+
+    private final DataCache dataCache;
 
     private static final String BLUE = "Синяя";
     private static final String RED = "Красная";
     private static final String GREEN = "Зелёная";
     private static final String YELLOW = "Жёлтая";
-    public SimonSaysSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
 
     @Override
-    public String handle(String message, Long userId) {
-        var bomb = userDataCache.getUserBomb(userId);
-        if (userDataCache.getUserModule(userId) == null)
-            userDataCache.saveUserModule(userId, new SimonSays());
-        var module = (SimonSays) userDataCache.getUserModule(userId);
+    public String solve(String message, Long userId) {
+        var bomb = dataCache.getUserBomb(userId);
+        if (dataCache.getUserModule(userId) == null)
+            dataCache.saveUserModule(userId, new SimonSays());
+        var module = (SimonSays) dataCache.getUserModule(userId);
         if (message.equals("стоп")) {
-            userDataCache.solveModule(userId);
+            dataCache.solveModule(userId);
             return "Решено";
         }
         if (bomb.serialHasVowel()) {
@@ -52,19 +54,19 @@ public class SimonSaysSolver extends Handler {
         switch (message) {
             case "r":
                 module.setResult(module.getResult() + r + " ");
-                userDataCache.saveUserModule(userId, module);
+                dataCache.saveUserModule(userId, module);
                 return true;
             case "b":
                 module.setResult(module.getResult() + b + " ");
-                userDataCache.saveUserModule(userId, module);
+                dataCache.saveUserModule(userId, module);
                 return true;
             case "g":
                 module.setResult(module.getResult() + g + " ");
-                userDataCache.saveUserModule(userId, module);
+                dataCache.saveUserModule(userId, module);
                 return true;
             case "y":
                 module.setResult(module.getResult() + y + " ");
-                userDataCache.saveUserModule(userId, module);
+                dataCache.saveUserModule(userId, module);
                 return true;
         }
         return false;

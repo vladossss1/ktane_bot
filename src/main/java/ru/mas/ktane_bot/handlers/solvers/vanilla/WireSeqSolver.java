@@ -1,12 +1,18 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.WireSeq;
 
 import java.util.List;
 
-public class WireSeqSolver extends Handler {
+@Component("wireSeqSolver")
+@RequiredArgsConstructor
+public class WireSeqSolver implements Solver {
+
+    private final DataCache dataCache;
 
     private static final List<List<Character>> red = List.of(
             List.of('c'),
@@ -47,13 +53,9 @@ public class WireSeqSolver extends Handler {
     private final static String DONT_CUT = "Не резать";
     private final static String CUT = "Резать";
 
-    public WireSeqSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
-
     @Override
-    public String handle(String message, Long userId) {
-        var module = (WireSeq) userDataCache.getUserModule(userId);
+    public String solve(String message, Long userId) {
+        var module = (WireSeq) dataCache.getUserModule(userId);
         String result;
         if (message.length() == 2)
             result = calculateCut(message.charAt(0), message.charAt(1), module);
@@ -68,7 +70,7 @@ public class WireSeqSolver extends Handler {
             result = "Дальше";
 
         if (module.getStateCount() == 3)
-            userDataCache.solveModule(userId);
+            dataCache.solveModule(userId);
 
         return result;
     }

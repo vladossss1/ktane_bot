@@ -1,14 +1,18 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.mas.ktane_bot.bot.state.BotState;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 
 import java.util.List;
 
-@Component
-public class WiresSolver extends Handler {
+@Component("wiresSolver")
+@RequiredArgsConstructor
+public class WiresSolver implements Solver {
+
+    private final DataCache dataCache;
+
     private List<Character> wires;
     private static final String FIRST = "Первый";
     private static final String SECOND = "Второй";
@@ -18,15 +22,12 @@ public class WiresSolver extends Handler {
     private static final String LAST_BLUE = "Последний синий";
     private static final String LAST_RED = "Последний красный";
 
-    public WiresSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
 
     @Override
-    public String handle(String message, Long userId) {
+    public String solve(String message, Long userId) {
         wires = message.chars().mapToObj(c -> (char)c).toList();
-        var bomb = userDataCache.getUserBomb(userId);
-        userDataCache.solveModule(userId);
+        var bomb = dataCache.getUserBomb(userId);
+        dataCache.solveModule(userId);
         switch (wires.size()) {
             case 3:
                 if (!wires.contains('r'))
