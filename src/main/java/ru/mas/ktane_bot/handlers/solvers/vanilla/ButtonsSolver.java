@@ -1,26 +1,25 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.mas.ktane_bot.bot.state.BotState;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.Button;
 
-@Component
-public class ButtonsSolver extends Handler {
+@Component("buttonsSolver")
+@RequiredArgsConstructor
+public class ButtonsSolver implements Solver {
     private static final String IMMEDIATE_RELEASE = "Нажмите и резко отпустите";
     private static final String HOLD_AND_RELEASE = "Удерживайте и если полоска синяя - отпустите на 4\nЕсли полоска жёлтая - отпустите на 5\nИначе отпустите на 1";
 
-    public ButtonsSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
+    private final DataCache dataCache;
 
     @Override
-    public String handle(String message, Long userId) {
+    public String solve(String message, Long userId) {
         var splitted = message.split(" ");
-        var bomb = userDataCache.getUserBomb(userId);
+        var bomb = dataCache.getUserBomb(userId);
         var button = new Button(splitted[0], splitted[1]);
-        userDataCache.solveModule(userId);
+        dataCache.solveModule(userId);
         if (button.getName().equalsIgnoreCase("abort")
                 && button.getColor().equalsIgnoreCase("blue"))
             return HOLD_AND_RELEASE;

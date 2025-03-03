@@ -1,12 +1,18 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.modules.Morse;
 
 import java.util.Map;
 
-public class MorseSolver extends Handler {
+@Component("morseSolver")
+@RequiredArgsConstructor
+public class MorseSolver implements Solver {
+
+    private final DataCache dataCache;
 
     private static final Map<String, String> letters = Map.ofEntries(
             Map.entry(".-", "а"), Map.entry("-...", "б"), Map.entry(".--", "в"),
@@ -31,17 +37,13 @@ public class MorseSolver extends Handler {
             Map.entry("порог", "3.600 МГц")
     );
 
-    public MorseSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
-
     @Override
-    public String handle(String message, Long userId) {
+    public String solve(String message, Long userId) {
         var letter = letters.get(message);
-        var module = (Morse) userDataCache.getUserModule(userId);
+        var module = (Morse) dataCache.getUserModule(userId);
         if (module == null) {
             module = new Morse();
-            userDataCache.saveUserModule(userId, module);
+            dataCache.saveUserModule(userId, module);
         }
         module.addLetter(letter);
         var result = module.getResult();
@@ -49,7 +51,7 @@ public class MorseSolver extends Handler {
         if (resultList.size() > 1) {
             return "Введите еще одну букву";
         } else {
-            userDataCache.solveModule(userId);
+            dataCache.solveModule(userId);
             return resultList.get(0);
         }
     }
