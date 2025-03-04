@@ -1,6 +1,7 @@
 package ru.mas.ktane_bot.handlers.solvers;
 
-public interface Solver {
+import ru.mas.ktane_bot.model.MessageDto;
 
-    String solve(String message, Long userId);
+public interface Solver {
+    MessageDto solve(String message, String userId);
 }

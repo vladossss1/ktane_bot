@@ -3,18 +3,17 @@ package ru.mas.ktane_bot.handlers.solvers.vanilla.needy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 
 import java.util.Arrays;
 import java.util.Map;
 
+import static ru.mas.ktane_bot.model.CommonValues.*;
+
 @Component("knobsSolver")
 @RequiredArgsConstructor
 public class KnobsSolver implements Solver {
-
-    private static final String UP = "Вверх";
-    private static final String DOWN = "Вниз";
-    private static final String LEFT = "Влево";
-    private static final String RIGHT = "Вправо";
 
     private static final Map<String, String> result = Map.ofEntries(
             Map.entry("35612346", UP), Map.entry("1352356", UP),
@@ -24,8 +23,8 @@ public class KnobsSolver implements Solver {
     );
 
     @Override
-    public String solve(String message, Long userId) {
+    public MessageDto solve(String message, String userId) {
         var splitted = Arrays.stream(message.split(" ")).toList();
-        return result.get(splitted.get(1));
+        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result.get(splitted.get(1))).build();
     }
 }

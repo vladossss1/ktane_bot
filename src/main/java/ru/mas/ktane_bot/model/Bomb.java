@@ -1,6 +1,5 @@
 package ru.mas.ktane_bot.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -8,7 +7,6 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -27,7 +25,7 @@ public class Bomb {
 
     private int batteriesCount;
 
-    private int batteriesSlotsCount;
+    private int batteriesHoldersCount;
 
     private int portHoldersCount;
 
@@ -63,6 +61,14 @@ public class Bomb {
     }
 
     public boolean serialHasVowel() {
-        return Pattern.compile("[aeiou]", Pattern.CASE_INSENSITIVE).matcher(serialNumber).find();
+        return serialHasSymbol("[aeiou]");
+    }
+
+    public boolean hasIndicator(String name, boolean lit) {
+        return indicators.stream().anyMatch(i -> i.getName().equals(name) && i.getLit().equals(lit));
+    }
+
+    public boolean serialHasSymbol(String pattern) {
+        return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(serialNumber).find();
     }
 }

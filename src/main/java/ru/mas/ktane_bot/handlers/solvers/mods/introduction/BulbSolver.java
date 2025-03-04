@@ -1,43 +1,44 @@
 package ru.mas.ktane_bot.handlers.solvers.mods.introduction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import ru.mas.ktane_bot.cache.UserDataCache;
-import ru.mas.ktane_bot.handlers.Handler;
+import org.springframework.stereotype.Component;
+import ru.mas.ktane_bot.cache.DataCache;
+import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.Bomb;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 import ru.mas.ktane_bot.model.modules.Bulb;
 
-public class BulbSolver extends Handler {
+@Component("bulbSolver")
+@RequiredArgsConstructor
+public class BulbSolver implements Solver {
 
+    private final DataCache dataCache;
     Bomb bomb;
     Bulb module;
 
-    public BulbSolver(UserDataCache userDataCache) {
-        super(userDataCache);
-    }
-
     @SneakyThrows
     @Override
-    public String handle(String message, Long userId) {
-        bomb = userDataCache.getUserBomb(userId);
-        module = (Bulb) userDataCache.getUserModule(userId);
+    public MessageDto solve(String message, String userId) {
+        bomb = dataCache.getUserBomb(userId);
+        module = (Bulb) dataCache.getUserModule(userId);
         String desc;
         if (message.equals("y") || message.equals("n")) {
             if (module.getCurrentMethod().getName().matches("step2|step3|step6")) {
                 module.setBulbGotOff(message.equals("y"));
                 desc = (String) module.getCurrentMethod().invoke(this, module.getDescription());
-            }
-            else {
+            } else {
                 module.setBulbOn(message.equals("y"));
                 desc = (String) module.getCurrentMethod().invoke(this);
             }
         } else
             desc = step1(message);
         if (module.getCurrentMethod() == null) {
-            userDataCache.solveModule(userId);
-            return desc;
-        }
-        else {
-            return desc + (module.getCurrentMethod().getName().matches("step12|step13") ? "" : "Свет погас? y/n");
+            dataCache.solveModule(userId);
+            return MessageDto.builder().messageType(MessageType.TEXT).text(desc).userId(userId).build();
+        } else {
+            return MessageDto.builder().messageType(MessageType.TEXT).text(desc + (module.getCurrentMethod().getName().matches("step12|step13") ? "" : "Свет погас? y/n")).userId(userId).build();
         }
     }
 
@@ -176,8 +177,7 @@ public class BulbSolver extends Handler {
         if (module.getCurrentMethod() == null) {
             module.setCurrentMethod(BulbSolver.class.getMethod("step12"));
             return "Лампочка горит?";
-        }
-        else {
+        } else {
             module.setCurrentMethod(null);
             return module.isBulbOn() ? "I" : "O";
         }
@@ -187,8 +187,7 @@ public class BulbSolver extends Handler {
         if (module.getCurrentMethod() == null) {
             module.setCurrentMethod(BulbSolver.class.getMethod("step13"));
             return "Лампочка горит?";
-        }
-        else {
+        } else {
             module.setCurrentMethod(null);
             return module.isBulbOn() ? "O" : "I";
         }
