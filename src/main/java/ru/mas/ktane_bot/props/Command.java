@@ -22,4 +22,7 @@ public interface Command {
     String CANCEL_BOMB = "/cancelbomb";
     String EMOJI_MATH = "/emojimath";
     String CRAZY_TALK = "/crazytalk";
+    String LETTER_KEYS = "/letterkeys";
+    String BULB = "/bulb";
+    String PIANO_KEYS = "/pianokeys";
 }

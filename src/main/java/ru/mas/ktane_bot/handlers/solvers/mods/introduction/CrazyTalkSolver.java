@@ -1,14 +1,18 @@
-package ru.mas.ktane_bot.handlers.solvers.mods.easy;
+package ru.mas.ktane_bot.handlers.solvers.mods.introduction;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 import ru.mas.ktane_bot.model.modules.CrazyTalk;
 
+import java.util.List;
 import java.util.Map;
 
-@Component
+@Component("crazyTalkSolver")
 @RequiredArgsConstructor
 public class CrazyTalkSolver implements Solver {
 
@@ -102,11 +106,11 @@ public class CrazyTalkSolver implements Solver {
     );
 
     @Override
-    public String solve(String message, Long userId) {
+    public MessageDto solve(String message, String userId) {
         var module = (CrazyTalk) dataCache.getUserModule(userId);
         if (message.equals("_")) {
             dataCache.solveModule(userId);
-            return wordMap.get(module.getCurrentWords().get(module.getCurrentWords().indexOf(module.getCurrentResult())));
+            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(wordMap.get(module.getCurrentWords().get(module.getCurrentWords().indexOf(module.getCurrentResult())))).build();
         }
         if (module.getCurrentWords().isEmpty()) {
             module.setCurrentWords(wordMap.keySet().stream().filter(w -> w.startsWith(message)).toList());
@@ -118,11 +122,11 @@ public class CrazyTalkSolver implements Solver {
         }
         if (module.getCurrentWords().size() == 1) {
             dataCache.solveModule(userId);
-            return wordMap.get(module.getCurrentWords().get(0));
+            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(wordMap.get(module.getCurrentWords().get(0))).build();
         }
         else {
             dataCache.saveUserModule(userId, module);
-            return "Введите следующее слово";
+            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите следующее слово: ").build();
         }
     }
 }

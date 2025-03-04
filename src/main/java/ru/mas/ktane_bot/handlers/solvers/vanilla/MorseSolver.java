@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 import ru.mas.ktane_bot.model.modules.Morse;
 
 import java.util.Map;
@@ -38,7 +40,7 @@ public class MorseSolver implements Solver {
     );
 
     @Override
-    public String solve(String message, Long userId) {
+    public MessageDto solve(String message, String userId) {
         var letter = letters.get(message);
         var module = (Morse) dataCache.getUserModule(userId);
         if (module == null) {
@@ -49,10 +51,10 @@ public class MorseSolver implements Solver {
         var result = module.getResult();
         var resultList = words.keySet().stream().filter(w -> w.startsWith(result)).map(words::get).toList();
         if (resultList.size() > 1) {
-            return "Введите еще одну букву";
+            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите еще одну букву").build();
         } else {
             dataCache.solveModule(userId);
-            return resultList.get(0);
+            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(resultList.get(0)).build();
         }
     }
 }

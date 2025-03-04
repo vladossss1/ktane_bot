@@ -6,25 +6,25 @@ import ru.mas.ktane_bot.model.Bomb;
 import ru.mas.ktane_bot.model.modules.BombModule;
 
 public interface DataCache {
-    void setUsersCurrentBotState(long userId, BotState botState);
+    void setUsersCurrentBotState(String userId, BotState botState);
 
-    BotState getUsersCurrentBotState(long userId);
+    BotState getUsersCurrentBotState(String userId);
 
-    Bomb getUserBomb(long userId);
+    Bomb getUserBomb(String userId);
 
-    void saveUserBomb(long userId, Bomb bomb);
+    void saveUserBomb(String userId, Bomb bomb);
 
-    boolean hasUser(long userId);
+    boolean hasUser(String userId);
 
-    void setUsersCurrentBotSubState(long userId, BotSubState botSubState);
+    void setUsersCurrentBotSubState(String userId, BotSubState botSubState);
 
-    BotSubState getUsersCurrentBotSubState(long userId);
+    BotSubState getUsersCurrentBotSubState(String userId);
 
-    BombModule getUserModule(long userId);
+    BombModule getUserModule(String userId);
 
-    void saveUserModule(long userId, BombModule module);
+    void saveUserModule(String userId, BombModule module);
 
-    boolean hasBomb(long userId);
+    boolean hasBomb(String userId);
 
-    void solveModule(long userId);
+    void solveModule(String userId);
 }
