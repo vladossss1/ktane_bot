@@ -73,7 +73,6 @@ public class UserDataCache implements DataCache{
     @Override
     public void solveModule(String userId) {
         setUsersCurrentBotState(userId, BotState.DEFAULT);
-        setUsersCurrentBotSubState(userId, null);
         saveUserModule(userId, null);
         getUserBomb(userId).solveModule();
     }

@@ -6,7 +6,7 @@ import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.Morse;
+import ru.mas.ktane_bot.model.modules.vanilla.MorseModule;
 
 import java.util.Map;
 
@@ -42,16 +42,12 @@ public class MorseSolver implements Solver {
     @Override
     public MessageDto solve(String message, String userId) {
         var letter = letters.get(message);
-        var module = (Morse) dataCache.getUserModule(userId);
-        if (module == null) {
-            module = new Morse();
-            dataCache.saveUserModule(userId, module);
-        }
+        var module = (MorseModule) dataCache.getUserModule(userId);
         module.addLetter(letter);
         var result = module.getResult();
         var resultList = words.keySet().stream().filter(w -> w.startsWith(result)).map(words::get).toList();
         if (resultList.size() > 1) {
-            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите еще одну букву").build();
+            return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
         } else {
             dataCache.solveModule(userId);
             return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(resultList.get(0)).build();
