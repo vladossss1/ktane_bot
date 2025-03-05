@@ -7,20 +7,23 @@ import lombok.Getter;
 @Getter
 public enum BotState {
     DEFAULT (null),
-    CREATEBOMB (null),
+    CREATE_BOMB (null),
     WIRES ("wiresSolver"),
     BUTTON ("buttonsSolver"),
     KEYBOARD ("keyboardSolver"),
     MEMORY ("memorySolver"),
     LABYRINTH ("labyrinthSolver"),
-    SIMONSAYS ("simonSaysSolver"),
+    SIMON_SAYS ("simonSaysSolver"),
     MORSE ("morseSolver"),
-    WHOSONFIRST ("whosOnFirstSolver"),
+    WHOS_ON_FIRST ("whosOnFirstSolver"),
     PASSWORD ("passwordSolver"),
-    COMPWIRES ("compWiresSolver"),
-    WIRESEQ ("wireSeqSolver"),
-    EMOJIMATH ("emojiMathSolver"),
-    CRAZYTALK ("crazyTalkSolver");
+    COMP_WIRES ("compWiresSolver"),
+    WIRE_SEQ ("wireSeqSolver"),
+    EMOJI_MATH ("emojiMathSolver"),
+    CRAZY_TALK ("crazyTalkSolver"),
+    LETTER_KEYS("letterKeysSolver"),
+    BULB("bulbSolver"),
+    PIANO_KEYS("pianoKeysSolver");
 
     private final String solverBeanName;
 }

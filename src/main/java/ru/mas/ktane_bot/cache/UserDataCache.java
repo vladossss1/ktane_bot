@@ -11,18 +11,18 @@ import java.util.Map;
 
 @Component
 public class UserDataCache implements DataCache{
-    private final Map<Long, BotState> usersBotStates = new HashMap<>();
-    private final Map<Long, BotSubState> usersBotSubStates = new HashMap<>();
-    private final Map<Long, Bomb> usersBombs = new HashMap<>();
-    private final Map<Long, BombModule> usersModules = new HashMap<>();
+    private final Map<String, BotState> usersBotStates = new HashMap<>();
+    private final Map<String, BotSubState> usersBotSubStates = new HashMap<>();
+    private final Map<String, Bomb> usersBombs = new HashMap<>();
+    private final Map<String, BombModule> usersModules = new HashMap<>();
 
     @Override
-    public void setUsersCurrentBotState(long userId, BotState botState) {
+    public void setUsersCurrentBotState(String userId, BotState botState) {
         usersBotStates.put(userId, botState);
     }
 
     @Override
-    public BotState getUsersCurrentBotState(long userId) {
+    public BotState getUsersCurrentBotState(String userId) {
         var botState = usersBotStates.get(userId);
         if (botState == null)
             botState = BotState.DEFAULT;
@@ -31,47 +31,47 @@ public class UserDataCache implements DataCache{
     }
 
     @Override
-    public Bomb getUserBomb(long userId) {
+    public Bomb getUserBomb(String userId) {
         return usersBombs.get(userId);
     }
 
     @Override
-    public void saveUserBomb(long userId, Bomb bomb) {
+    public void saveUserBomb(String userId, Bomb bomb) {
         usersBombs.put(userId, bomb);
     }
 
     @Override
-    public boolean hasUser(long userId) {
+    public boolean hasUser(String userId) {
         return usersBotStates.containsKey(userId);
     }
 
     @Override
-    public void setUsersCurrentBotSubState(long userId, BotSubState botSubState) {
+    public void setUsersCurrentBotSubState(String userId, BotSubState botSubState) {
         usersBotSubStates.put(userId, botSubState);
     }
 
     @Override
-    public BotSubState getUsersCurrentBotSubState(long userId) {
+    public BotSubState getUsersCurrentBotSubState(String userId) {
         return usersBotSubStates.get(userId);
     }
 
     @Override
-    public BombModule getUserModule(long userId) {
+    public BombModule getUserModule(String userId) {
         return usersModules.get(userId);
     }
 
     @Override
-    public void saveUserModule(long userId, BombModule module) {
+    public void saveUserModule(String userId, BombModule module) {
         usersModules.put(userId, module);
     }
 
     @Override
-    public boolean hasBomb(long userId) {
+    public boolean hasBomb(String userId) {
         return usersBombs.containsKey(userId);
     }
 
     @Override
-    public void solveModule(long userId) {
+    public void solveModule(String userId) {
         setUsersCurrentBotState(userId, BotState.DEFAULT);
         setUsersCurrentBotSubState(userId, null);
         saveUserModule(userId, null);

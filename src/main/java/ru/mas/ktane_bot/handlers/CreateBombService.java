@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.DataCache;
-import ru.mas.ktane_bot.model.Bomb;
-import ru.mas.ktane_bot.model.Indicator;
-import ru.mas.ktane_bot.model.PortType;
+import ru.mas.ktane_bot.model.*;
 
 import java.util.List;
 
@@ -17,64 +15,65 @@ public class CreateBombService {
 
     private final DataCache dataCache;
 
-    public String createBomb(String message, Long userId) {
+    public MessageDto createBomb(String message, String userId) {
         var subState = dataCache.getUsersCurrentBotSubState(userId);
         var bomb = dataCache.getUserBomb(userId);
         switch (subState) {
             case BEGINCREATE:
                 dataCache.saveUserBomb(userId, new Bomb());
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.SERIALNUMBER);
-                return "Введите серийный номер:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите серийный номер:").build();
             case SERIALNUMBER:
                 bomb.setSerialNumber(message.toUpperCase());
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.LIT_INDICATORS);
-                return "Введите горящие индикаторы через пробел или _ если их нет:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите горящие индикаторы через пробел или _ если их нет:").build();
             case LIT_INDICATORS:
                 if (!message.equals("_"))
                     add_indicators(bomb, message.toUpperCase(), true);
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.UNLIT_INDICATORS);
-                return "Введите негорящие индикаторы через пробел или _ если их нет:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите негорящие индикаторы через пробел или _ если их нет:").build();
             case UNLIT_INDICATORS:
                 if (!message.equals("_"))
                     add_indicators(bomb, message.toUpperCase(), false);
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.D_BATTERIES);
-                return "Введите количество батареек типа D:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество батареек типа D:").build();
             case D_BATTERIES:
                 bomb.setDBatteriesCount((Integer.parseInt(message)));
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.AA_BATTERIES);
-                return "Введите количество батареек типа AA:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество батареек типа AA:").build();
             case AA_BATTERIES:
                 bomb.setAaBatteriesCount((Integer.parseInt(message)));
                 bomb.setBatteriesCount(bomb.getDBatteriesCount() + bomb.getAaBatteriesCount());
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.BATTERIES_SLOTS);
-                return "Введите количество слотов под батарейки:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество слотов под батарейки:").build();
             case BATTERIES_SLOTS:
-                bomb.setBatteriesSlotsCount((Integer.parseInt(message)));
+                bomb.setBatteriesHoldersCount((Integer.parseInt(message)));
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.PORTS);
-                return "Введите порты через пробел (если портов несколько нужно ввести несколько раз) или _ если их нет:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
+                        .text("Введите порты через пробел (если портов несколько нужно ввести несколько раз) или _ если их нет:").build();
             case PORTS:
                 if (!message.equals("_"))
                     add_ports(bomb, message.toUpperCase());
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.PORT_HOLDERS_SLOTS);
-                return "Введите количество держателей для портов:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество держателей для портов:").build();
             case PORT_HOLDERS_SLOTS:
                 bomb.setPortHoldersCount((Integer.parseInt(message)));
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.MODULES);
-                return "Введите количество модулей:";
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество модулей:").build();
             case MODULES:
                 bomb.setModulesCount((Integer.parseInt(message)));
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, null);
                 dataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
-                return "Ваша бомба: " + bomb;
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Ваша бомба: " + bomb).build();
         }
         return null;
     }

@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +63,7 @@ public class WhosOnFirstSolver implements Solver {
     );
 
     @Override
-    public String solve(String message, Long userId) {
+    public MessageDto solve(String message, String userId) {
         var splitted = Arrays.stream(message.split(",")).toList();
         var subState = dataCache.getUsersCurrentBotSubState(userId);
         switch (subState) {
@@ -78,7 +80,7 @@ public class WhosOnFirstSolver implements Solver {
         }
         for (var word: stepTwo.get(splitted.get(stepOne.get(splitted.get(0))))) {
             if (splitted.subList(1, 7).contains(word))
-                return word;
+                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(word).build();
         }
         return null;
     }

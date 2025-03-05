@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 import ru.mas.ktane_bot.model.modules.Password;
 
 import java.util.Arrays;
@@ -27,7 +29,7 @@ public class PasswordSolver implements Solver {
     );
 
     @Override
-    public String solve(String message, Long userId) {
+    public MessageDto solve(String message, String userId) {
         var substate = dataCache.getUsersCurrentBotSubState(userId);
         return switch (substate) {
             case PASSWORD1 -> checkWords(substate, message, new Password(), userId);
@@ -37,7 +39,7 @@ public class PasswordSolver implements Solver {
         };
     }
 
-    private String checkWords(BotSubState subState, String message, Password password, Long userId) {
+    private MessageDto checkWords(BotSubState subState, String message, Password password, String userId) {
         var letters = message.chars().mapToObj(c -> (char)c).toList();
         List<String> currentWords;
         int stage = subState.equals(BotSubState.PASSWORD1) ?
@@ -50,14 +52,14 @@ public class PasswordSolver implements Solver {
             currentWords = password.getCurrentWords().stream().filter(w -> letters.contains(w.toCharArray()[stage])).toList();
         if (currentWords.size() == 1) {
             dataCache.solveModule(userId);
-            return currentWords.get(0);
+            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(currentWords.get(0)).build();
         }
         else {
             dataCache.setUsersCurrentBotSubState(userId,
                     stage == 0 ? BotSubState.PASSWORD2 : stage == 1 ? BotSubState.PASSWORD3 : BotSubState.PASSWORD4);
             password.setCurrentWords(currentWords);
             dataCache.saveUserModule(userId, password);
-            return "Введите следующий список букв";
+            return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите следующий список букв").build();
         }
 
     }

@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 import ru.mas.ktane_bot.model.modules.Labyrinth;
 import ru.mas.ktane_bot.model.modules.LabyrinthVertex;
 
 import java.util.*;
+
+import static ru.mas.ktane_bot.model.CommonValues.*;
 
 @Component("labyrinthSolver")
 @RequiredArgsConstructor
@@ -30,7 +34,7 @@ public class LabyrinthSolver implements Solver {
     private final DataCache dataCache;
 
     @Override
-    public String solve(String message, Long userId) {
+    public MessageDto solve(String message, String userId) {
         var splitted = Arrays.stream(message.split(" ")).toList();
 
         for (int i = 0; i < circles.size(); i++) {
@@ -76,20 +80,20 @@ public class LabyrinthSolver implements Solver {
                 labyrinth.getTable().stream().filter(n -> n.getCoordinate() == labyrinth.getDestination()).findAny().get(),
                 passed, path);
         dataCache.solveModule(userId);
-        return buildPath(path);
+        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(buildPath(path)).build();
     }
 
     private String buildPath(LinkedList<LabyrinthVertex> path) {
         var sb = new StringBuilder();
         for (int i = 1; i < path.size(); i++) {
             if (path.get(i).getCoordinate() - path.get(i - 1).getCoordinate() == 6)
-                sb.append("вниз\n");
+                sb.append(DOWN).append(NEW_ROW);
             else if (path.get(i).getCoordinate() - path.get(i - 1).getCoordinate() == -6)
-                sb.append("вверх\n");
+                sb.append(UP).append(NEW_ROW);
             else if (path.get(i).getCoordinate() - path.get(i - 1).getCoordinate() == -1)
-                sb.append("влево\n");
+                sb.append(LEFT).append(NEW_ROW);
             else
-                sb.append("вправо\n");
+                sb.append(RIGHT).append(NEW_ROW);
         }
         return sb.toString();
     }

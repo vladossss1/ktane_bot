@@ -4,9 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
+import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.MessageType;
 import ru.mas.ktane_bot.model.modules.WireSeq;
 
 import java.util.List;
+
+import static ru.mas.ktane_bot.model.CommonValues.CUT;
+import static ru.mas.ktane_bot.model.CommonValues.DONT_CUT;
 
 @Component("wireSeqSolver")
 @RequiredArgsConstructor
@@ -50,11 +55,8 @@ public class WireSeqSolver implements Solver {
             List.of('c')
     );
 
-    private final static String DONT_CUT = "Не резать";
-    private final static String CUT = "Резать";
-
     @Override
-    public String solve(String message, Long userId) {
+    public MessageDto solve(String message, String userId) {
         var module = (WireSeq) dataCache.getUserModule(userId);
         String result;
         if (message.length() == 2)
@@ -67,12 +69,12 @@ public class WireSeqSolver implements Solver {
                     + calculateCut(message.charAt(2), message.charAt(3), module) + " "
                     + calculateCut(message.charAt(4), message.charAt(5), module);
         else
-            result = "Дальше";
+            return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
 
         if (module.getStateCount() == 3)
             dataCache.solveModule(userId);
 
-        return result;
+        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();
     }
 
     private String calculateCut(char color, char letter, WireSeq module) {
