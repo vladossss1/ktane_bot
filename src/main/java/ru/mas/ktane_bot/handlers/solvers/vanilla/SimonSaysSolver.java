@@ -6,7 +6,9 @@ import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.SimonSays;
+import ru.mas.ktane_bot.model.modules.vanilla.SimonSaysModule;
+
+import java.util.Map;
 
 @Component("simonSaysSolver")
 @RequiredArgsConstructor
@@ -22,55 +24,50 @@ public class SimonSaysSolver implements Solver {
     @Override
     public MessageDto solve(String message, String userId) {
         var bomb = dataCache.getUserBomb(userId);
-        if (dataCache.getUserModule(userId) == null)
-            dataCache.saveUserModule(userId, new SimonSays());
-        var module = (SimonSays) dataCache.getUserModule(userId);
+        var module = (SimonSaysModule) dataCache.getUserModule(userId);
         if (message.equals("stop")) {
             dataCache.solveModule(userId);
             return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
         }
-        if (bomb.serialHasVowel()) {
-            switch (bomb.getErrorsCount()) {
-                case 0:
-                    if (calculate(message, userId, module, BLUE, RED, YELLOW, GREEN)) return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getResult()).build();
-                case 1:
-                    if (calculate(message, userId, module, YELLOW, GREEN, BLUE, RED)) return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getResult()).build();
-                case 2:
-                    if (calculate(message, userId, module, GREEN, RED, YELLOW, BLUE)) return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getResult()).build();
-            }
+        switch (bomb.getErrorsCount()) {
+            case 0:
+                calculate(message, userId, module, bomb.serialHasVowel() ?
+                        Map.of("r", BLUE, "b", RED, "g", YELLOW, "y", GREEN) :
+                        Map.of("r", BLUE, "b", YELLOW, "g", GREEN, "y", RED));
+                break;
+            case 1:
+                calculate(message, userId, module, bomb.serialHasVowel() ?
+                        Map.of("r", YELLOW, "b", GREEN, "g", BLUE, "y", RED) :
+                        Map.of("r", RED, "b", BLUE, "g", YELLOW, "y", GREEN));
+                break;
+            default:
+                calculate(message, userId, module, bomb.serialHasVowel() ?
+                        Map.of("r", GREEN, "b", RED, "g", YELLOW, "y", BLUE) :
+                        Map.of("r", YELLOW, "b", GREEN, "g", BLUE, "y", RED));
+                break;
         }
-        else {
-            switch (bomb.getErrorsCount()) {
-                case 0:
-                    if (calculate(message, userId, module, BLUE, YELLOW, GREEN, RED)) return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getResult()).build();
-                case 1:
-                    if (calculate(message, userId, module, RED, BLUE, YELLOW, GREEN)) return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getResult()).build();
-                case 2:
-                    if (calculate(message, userId, module, YELLOW, GREEN, BLUE, RED)) return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getResult()).build();
-            }
-        }
-        return null;
+        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getResult()).build();
     }
 
-    private boolean calculate(String message, String userId, SimonSays module, String r, String b, String g, String y) {
+    private void calculate(String message, String userId, SimonSaysModule module, Map<String, String> colors) {
         switch (message) {
             case "r":
-                module.setResult(module.getResult() + r + " ");
+                module.setResult(module.getResult() + colors.get("r") + " ");
                 dataCache.saveUserModule(userId, module);
-                return true;
+                break;
             case "b":
-                module.setResult(module.getResult() + b + " ");
+                module.setResult(module.getResult() + colors.get("b") + " ");
                 dataCache.saveUserModule(userId, module);
-                return true;
+                break;
             case "g":
-                module.setResult(module.getResult() + g + " ");
+                module.setResult(module.getResult() + colors.get("g") + " ");
                 dataCache.saveUserModule(userId, module);
-                return true;
+                break;
             case "y":
-                module.setResult(module.getResult() + y + " ");
+                module.setResult(module.getResult() + colors.get("y") + " ");
                 dataCache.saveUserModule(userId, module);
-                return true;
+                break;
         }
-        return false;
+
     }
 }

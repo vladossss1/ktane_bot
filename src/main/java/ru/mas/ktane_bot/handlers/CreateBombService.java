@@ -18,64 +18,59 @@ public class CreateBombService {
     public MessageDto createBomb(String message, String userId) {
         var subState = dataCache.getUsersCurrentBotSubState(userId);
         var bomb = dataCache.getUserBomb(userId);
-        switch (subState) {
+        var result = switch (subState) {
             case BEGINCREATE:
                 dataCache.saveUserBomb(userId, new Bomb());
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.SERIALNUMBER);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите серийный номер:").build();
+                yield "Введите серийный номер:";
             case SERIALNUMBER:
                 bomb.setSerialNumber(message.toUpperCase());
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.LIT_INDICATORS);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите горящие индикаторы через пробел или _ если их нет:").build();
+                yield "Введите горящие индикаторы через пробел или _ если их нет:";
             case LIT_INDICATORS:
                 if (!message.equals("_"))
                     add_indicators(bomb, message.toUpperCase(), true);
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.UNLIT_INDICATORS);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите негорящие индикаторы через пробел или _ если их нет:").build();
+                yield "Введите негорящие индикаторы через пробел или _ если их нет:";
             case UNLIT_INDICATORS:
                 if (!message.equals("_"))
                     add_indicators(bomb, message.toUpperCase(), false);
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.D_BATTERIES);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество батареек типа D:").build();
+                yield "Введите количество батареек типа D:";
             case D_BATTERIES:
                 bomb.setDBatteriesCount((Integer.parseInt(message)));
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.AA_BATTERIES);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество батареек типа AA:").build();
+                yield "Введите количество батареек типа AA:";
             case AA_BATTERIES:
                 bomb.setAaBatteriesCount((Integer.parseInt(message)));
                 bomb.setBatteriesCount(bomb.getDBatteriesCount() + bomb.getAaBatteriesCount());
-                dataCache.saveUserBomb(userId, bomb);
-                dataCache.setUsersCurrentBotSubState(userId, BotSubState.BATTERIES_SLOTS);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество слотов под батарейки:").build();
-            case BATTERIES_SLOTS:
-                bomb.setBatteriesHoldersCount((Integer.parseInt(message)));
+                bomb.setBatteriesHoldersCount(bomb.getAaBatteriesCount() / 2 + bomb.getDBatteriesCount());
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.PORTS);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
-                        .text("Введите порты через пробел (если портов несколько нужно ввести несколько раз) или _ если их нет:").build();
+                yield "Введите порты через пробел (если портов несколько нужно ввести несколько раз) или _ если их нет:";
             case PORTS:
                 if (!message.equals("_"))
                     add_ports(bomb, message.toUpperCase());
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.PORT_HOLDERS_SLOTS);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество держателей для портов:").build();
+                yield "Введите количество держателей для портов:";
             case PORT_HOLDERS_SLOTS:
                 bomb.setPortHoldersCount((Integer.parseInt(message)));
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, BotSubState.MODULES);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите количество модулей:").build();
+                yield "Введите количество модулей:";
             case MODULES:
                 bomb.setModulesCount((Integer.parseInt(message)));
                 dataCache.saveUserBomb(userId, bomb);
                 dataCache.setUsersCurrentBotSubState(userId, null);
                 dataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Ваша бомба: " + bomb).build();
-        }
-        return null;
+                yield "Ваша бомба: " + bomb;
+        };
+        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();
     }
 
     private void add_indicators(Bomb bomb, String message, boolean lit) {

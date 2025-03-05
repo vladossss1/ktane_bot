@@ -7,7 +7,7 @@ import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
 import ru.mas.ktane_bot.model.PortType;
-import ru.mas.ktane_bot.model.modules.PianoKeys;
+import ru.mas.ktane_bot.model.modules.mods.introduction.PianoKeysModule;
 
 import java.util.List;
 
@@ -46,13 +46,13 @@ public class PianoKeysSolver implements Solver {
     @Override
     public MessageDto solve(String message, String userId) {
         var bomb = dataCache.getUserBomb(userId);
-        var module = (PianoKeys) dataCache.getUserModule(userId);
+        var module = (PianoKeysModule) dataCache.getUserModule(userId);
         var result = "";
         module.addSymbol(message);
         if (module.getSymbols().size() < 3) {
             return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
         }
-        if (module.hasSymbol(FLAT) && bomb.isLastDigit(false))
+        if (module.hasSymbol(FLAT) && bomb.isLastDigitOfSerialNumber(false))
             result = String.join("\n", Bb, Bb, Bb, Bb, Gb, Ab, Bb, Ab, Bb);
         else if (module.hasOneOfSymbols(COMMON_TIME + "|" + SHARP) && bomb.getBatteriesHoldersCount() > 1)
             result = String.join("\n", Eb, Eb, D, D, Eb, Eb, D, Eb, Eb, D, D, Eb);

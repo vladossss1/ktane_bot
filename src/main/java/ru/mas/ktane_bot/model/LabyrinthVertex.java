@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.model.modules;
+package ru.mas.ktane_bot.model;
 
 import lombok.Getter;
 import lombok.Setter;

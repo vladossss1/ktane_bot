@@ -7,7 +7,7 @@ import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.Keyboard;
+import ru.mas.ktane_bot.model.modules.vanilla.KeyboardModule;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,7 +65,7 @@ public class KeyboardSolver implements Solver {
 
     @Override
     public MessageDto solve(String message, String userId) {
-        var module = (Keyboard) dataCache.getUserModule(userId);
+        var module = (KeyboardModule) dataCache.getUserModule(userId);
         module.addSticker(message);
         dataCache.saveUserModule(userId, module);
         if (module.getStickers().size() < 4) {

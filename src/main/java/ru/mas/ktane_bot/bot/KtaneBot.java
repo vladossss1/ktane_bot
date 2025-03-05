@@ -13,7 +13,10 @@ import ru.mas.ktane_bot.handlers.CreateMessageService;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.*;
+import ru.mas.ktane_bot.model.modules.mods.introduction.BulbModule;
+import ru.mas.ktane_bot.model.modules.mods.introduction.CrazyTalkModule;
+import ru.mas.ktane_bot.model.modules.mods.introduction.PianoKeysModule;
+import ru.mas.ktane_bot.model.modules.vanilla.*;
 
 import java.util.Map;
 
@@ -107,13 +110,13 @@ public class KtaneBot extends TelegramLongPollingBot {
                         break;
                     case KEYBOARD:
                         dataCache.setUsersCurrentBotState(userId, BotState.KEYBOARD);
-                        dataCache.saveUserModule(userId, new Keyboard());
+                        dataCache.saveUserModule(userId, new KeyboardModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Отправьте 4 стикера из стикерпака ниже, совпадающих с клавишами на вашей клавиатуре").build());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("https://t.me/addstickers/Ktane_Keyboard").build());
                         break;
                     case MEMORY:
                         dataCache.setUsersCurrentBotState(userId, BotState.MEMORY);
-                        dataCache.setUsersCurrentBotSubState(userId, BotSubState.MEMORY1);
+                        dataCache.saveUserModule(userId, new MemoryModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
                                 .text("Вводите на каждом этапе цифры, сначала на экране, потом остальные (пример: 43214)").build());
                         break;
@@ -125,35 +128,36 @@ public class KtaneBot extends TelegramLongPollingBot {
                         break;
                     case SIMON_SAYS:
                         dataCache.setUsersCurrentBotState(userId, BotState.SIMON_SAYS);
+                        dataCache.saveUserModule(userId, new SimonSaysModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
                                 .text("Вводите в каждом этапе цвет (пример: g - зеленый, y- желтый)," +
                                         " если этапы кончились напишите stop").build());
                         break;
                     case MORSE:
                         dataCache.setUsersCurrentBotState(userId, BotState.MORSE);
-                        sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите первую букву").build());
+                        dataCache.saveUserModule(userId, new MorseModule());
+                        sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Вводите буквы, пока не получите ответ").build());
                         break;
                     case WHOSONFIRST:
                         dataCache.setUsersCurrentBotState(userId, BotState.WHOS_ON_FIRST);
-                        dataCache.setUsersCurrentBotSubState(userId, BotSubState.WHOSONFIRST1);
+                        dataCache.saveUserModule(userId, new WhosOnFirstModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
                                 .text("Вводите в каждом этапе через запятую все слова, в порядке сначала то, " +
                                         "которое на экране, а потом клавиатуру слева направо сверху вниз").build());
                         break;
                     case PASSWORD:
                         dataCache.setUsersCurrentBotState(userId, BotState.PASSWORD);
-                        dataCache.setUsersCurrentBotSubState(userId, BotSubState.PASSWORD1);
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Вводите сначала все первые буквы, затем все вторые, пока не получите ответ (Пример: abcdef)").build());
                         break;
                     case COMPWIRES:
                         dataCache.setUsersCurrentBotState(userId, BotState.COMP_WIRES);
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
-                                .text("Вводите по одному проводу " +
+                                .text("Введите все провода через пробел " +
                                         "(пример: rbsl, где r - красный, b - синий, s - звезда, l - светодиод, _ - просто белый провод)").build());
                         break;
                     case WIRESEQ:
                         dataCache.setUsersCurrentBotState(userId, BotState.WIRE_SEQ);
-                        dataCache.saveUserModule(userId, new WireSeq());
+                        dataCache.saveUserModule(userId, new WireSeqModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Вводите по 0-3 проводам в формате darbbc, где\n" +
                                 "d - черный, b - синий, r - красный, a - A, b - Б, c - В, если проводов нет, то _").build());
                         break;
@@ -163,7 +167,7 @@ public class KtaneBot extends TelegramLongPollingBot {
                         break;
                     case CRAZY_TALK:
                         dataCache.setUsersCurrentBotState(userId, BotState.CRAZY_TALK);
-                        dataCache.saveUserModule(userId, new CrazyTalk());
+                        dataCache.saveUserModule(userId, new CrazyTalkModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите первое слово").build());
                         break;
                     case LETTER_KEYS:
@@ -172,14 +176,14 @@ public class KtaneBot extends TelegramLongPollingBot {
                         break;
                     case BULB:
                         dataCache.setUsersCurrentBotState(userId, BotState.BULB);
-                        dataCache.saveUserModule(userId, new Bulb());
+                        dataCache.saveUserModule(userId, new BulbModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
                                 .text("Введите включена ли лампа (on/off)," +
                                         " полупрозрачная она или сплошная (see-through/opaque) и какого она цвета через пробел").build());
                         break;
                     case PIANO_KEYS:
                         dataCache.setUsersCurrentBotState(userId, BotState.PIANO_KEYS);
-                        dataCache.saveUserModule(userId, new PianoKeys());
+                        dataCache.saveUserModule(userId, new PianoKeysModule());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Отправьте 3 стикера из стикерпака ниже, совпадающих с клавишами на экране").build());
                         sendMessage(MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("https://t.me/addstickers/Ktane_PianoKeys").build());
                         break;
