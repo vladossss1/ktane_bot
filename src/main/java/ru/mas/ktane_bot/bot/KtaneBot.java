@@ -23,14 +23,16 @@ import static ru.mas.ktane_bot.props.Command.*;
 public class KtaneBot extends TelegramLongPollingBot {
     private final DataCache dataCache;
     private final CreateBombService createBombService;
+    private final CreateMessageService createMessageService;
     private final Map<String, Solver> solverMap;
 
 
     public KtaneBot(@Value("${bot.token}") String botToken, DataCache dataCache,
-                    CreateBombService createBombService, Map<String, Solver> solverMap) {
+                    CreateBombService createBombService, CreateMessageService createMessageService, Map<String, Solver> solverMap) {
         super(botToken);
         this.dataCache = dataCache;
         this.createBombService = createBombService;
+        this.createMessageService = createMessageService;
         this.solverMap = solverMap;
     }
 
@@ -201,15 +203,15 @@ public class KtaneBot extends TelegramLongPollingBot {
         try {
             switch (messageDto.getMessageType()) {
                 case TEXT: {
-                    execute(CreateMessageService.createTextMessage(messageDto));
+                    execute(createMessageService.createTextMessage(messageDto));
                     break;
                 }
                 case STICKER: {
-                    execute(CreateMessageService.createStickerMessage(messageDto));
+                    execute(createMessageService.createStickerMessage(messageDto));
                     break;
                 }
                 case STICKER_LIST: {
-                    for (var sticker : CreateMessageService.createStickersMessageList(messageDto))
+                    for (var sticker : createMessageService.createStickersMessageList(messageDto))
                         execute(sticker);
                     break;
                 }

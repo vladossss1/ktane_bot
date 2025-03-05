@@ -68,6 +68,14 @@ public class Bomb {
         return indicators.stream().anyMatch(i -> i.getName().equals(name) && i.getLit().equals(lit));
     }
 
+    public boolean hasIndicator(String name) {
+        return indicators.stream().anyMatch(i -> i.getName().equals(name));
+    }
+
+    public boolean hasOneOfIndicators(String names) {
+        return indicators.stream().anyMatch(i -> i.getName().matches(names));
+    }
+
     public boolean serialHasSymbol(String pattern) {
         return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(serialNumber).find();
     }

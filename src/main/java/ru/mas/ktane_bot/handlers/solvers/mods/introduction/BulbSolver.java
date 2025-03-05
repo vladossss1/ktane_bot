@@ -15,8 +15,8 @@ import ru.mas.ktane_bot.model.modules.Bulb;
 public class BulbSolver implements Solver {
 
     private final DataCache dataCache;
-    Bomb bomb;
-    Bulb module;
+    private Bomb bomb;
+    private Bulb module;
 
     @SneakyThrows
     @Override
@@ -85,7 +85,7 @@ public class BulbSolver implements Solver {
     }
 
     private String step4(String description) throws NoSuchMethodException {
-        if (bomb.getIndicators().stream().anyMatch(i -> i.getName().matches("CAR|IND|MSA|SND")))
+        if (bomb.hasOneOfIndicators("CAR|IND|MSA|SND"))
             return "I " + step9(description);
         else
             return "O " + step10(description);
@@ -108,12 +108,12 @@ public class BulbSolver implements Solver {
 
     private String step7(String description) throws NoSuchMethodException {
         if (description.contains("green")) {
-            module.setRememberedIndicator(bomb.getIndicators().stream().anyMatch(i -> i.getName().equals("SIG")));
+            module.setRememberedIndicator(bomb.hasIndicator("SIG"));
             return "I " + step11();
         } else if (description.contains("purple")) {
             return "I вкрутите " + step12();
         } else if (description.contains("blue")) {
-            module.setRememberedIndicator(bomb.getIndicators().stream().anyMatch(i -> i.getName().equals("CLR")));
+            module.setRememberedIndicator(bomb.hasIndicator("CLR"));
             return "O " + step11();
         } else {
             return "O вкрутите " + step13();
@@ -122,12 +122,12 @@ public class BulbSolver implements Solver {
 
     private String step8(String description) throws NoSuchMethodException {
         if (description.contains("white")) {
-            module.setRememberedIndicator(bomb.getIndicators().stream().anyMatch(i -> i.getName().equals("FRQ")));
+            module.setRememberedIndicator(bomb.hasIndicator("FRQ"));
             return "I " + step11();
         } else if (description.contains("red")) {
             return "I вкрутите " + step13();
         } else if (description.contains("yellow")) {
-            module.setRememberedIndicator(bomb.getIndicators().stream().anyMatch(i -> i.getName().equals("FRK")));
+            module.setRememberedIndicator(bomb.hasIndicator("FRK"));
             return "O " + step11();
         } else {
             return "O вкрутите " + step12();

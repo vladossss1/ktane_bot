@@ -12,15 +12,15 @@ import java.util.List;
 @Service
 public class CreateMessageService {
 
-    public static SendMessage createTextMessage(MessageDto messageDto) {
+    public SendMessage createTextMessage(MessageDto messageDto) {
         return new SendMessage(messageDto.getUserId(), messageDto.getText());
     }
 
-    public static SendSticker createStickerMessage(MessageDto messageDto) {
+    public SendSticker createStickerMessage(MessageDto messageDto) {
         return new SendSticker(messageDto.getUserId(), messageDto.getSticker());
     }
 
-    public static List<SendSticker> createStickersMessageList(MessageDto messageDto) {
+    public List<SendSticker> createStickersMessageList(MessageDto messageDto) {
         var stickers = new ArrayList<SendSticker>();
         messageDto.getStickers().forEach(s -> stickers.add(new SendSticker(messageDto.getUserId(), s)));
         return stickers;
