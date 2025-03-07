@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class MessageDto {
     String text;
+    List<String> texts;
     String userId;
     InputFile sticker;
     List<InputFile> stickers;

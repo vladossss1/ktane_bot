@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.handlers;
+package ru.mas.ktane_bot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

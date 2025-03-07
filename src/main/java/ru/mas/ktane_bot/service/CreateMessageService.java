@@ -1,9 +1,8 @@
-package ru.mas.ktane_bot.handlers;
+package ru.mas.ktane_bot.service;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
-import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet;
 import ru.mas.ktane_bot.model.MessageDto;
 
 import java.util.ArrayList;
@@ -24,5 +23,11 @@ public class CreateMessageService {
         var stickers = new ArrayList<SendSticker>();
         messageDto.getStickers().forEach(s -> stickers.add(new SendSticker(messageDto.getUserId(), s)));
         return stickers;
+    }
+
+    public List<SendMessage> creatTextMessageList(MessageDto messageDto) {
+        var messages = new ArrayList<SendMessage>();
+        messageDto.getTexts().forEach(t -> messages.add(new SendMessage(messageDto.getUserId(), t)));
+        return messages;
     }
 }
