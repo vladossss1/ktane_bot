@@ -52,7 +52,7 @@ public class PianoKeysSolver implements Solver {
         if (module.getSymbols().size() < 3) {
             return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
         }
-        if (module.hasSymbol(FLAT) && bomb.isLastDigitOfSerialNumber(false))
+        if (module.hasSymbol(FLAT) && bomb.isLastDigitOfSerialNumberEven())
             result = String.join("\n", Bb, Bb, Bb, Bb, Gb, Ab, Bb, Ab, Bb);
         else if (module.hasOneOfSymbols(COMMON_TIME + "|" + SHARP) && bomb.getBatteriesHoldersCount() > 1)
             result = String.join("\n", Eb, Eb, D, D, Eb, Eb, D, Eb, Eb, D, D, Eb);

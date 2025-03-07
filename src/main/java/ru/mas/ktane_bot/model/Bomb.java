@@ -45,9 +45,9 @@ public class Bomb {
         ports.add(port);
     }
 
-    public boolean isLastDigitOfSerialNumber(boolean odd) {
+    public boolean isLastDigitOfSerialNumberEven() {
         return serialNumber.chars().mapToObj(ch -> (char) ch).filter(Character::isDigit).reduce((a, b) -> b)
-                .filter(character -> character % 2 == (odd ? 1 : 0)).isPresent();
+                .filter(character -> character % 2 == 0).isPresent();
     }
 
     public void solveModule() {

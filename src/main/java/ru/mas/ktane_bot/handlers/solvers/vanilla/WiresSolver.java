@@ -37,7 +37,7 @@ public class WiresSolver implements Solver {
                     yield LAST_BLUE;
             }
             case 4 -> {
-                if (moreThanOneWire('r') && bomb.isLastDigitOfSerialNumber(true))
+                if (moreThanOneWire('r') && !bomb.isLastDigitOfSerialNumberEven())
                     yield LAST_RED;
                 else if ((lastWire('y') && noWire('r')) || exactlyOneWire('b'))
                     yield ONE;
@@ -47,7 +47,7 @@ public class WiresSolver implements Solver {
                     yield TWO;
             }
             case 5 -> {
-                if (lastWire('d') && bomb.isLastDigitOfSerialNumber(true))
+                if (lastWire('d') && !bomb.isLastDigitOfSerialNumberEven())
                     yield FOUR;
                 else if ((exactlyOneWire('r') && moreThanOneWire('y')) || !noWire('d'))
                     yield ONE;
@@ -55,7 +55,7 @@ public class WiresSolver implements Solver {
                     yield TWO;
             }
             case 6 -> {
-                if (noWire('y') && bomb.isLastDigitOfSerialNumber(true))
+                if (noWire('y') && !bomb.isLastDigitOfSerialNumberEven())
                     yield THREE;
                 else if ((exactlyOneWire('y') && moreThanOneWire('w')) || !noWire('r'))
                     yield FOUR;

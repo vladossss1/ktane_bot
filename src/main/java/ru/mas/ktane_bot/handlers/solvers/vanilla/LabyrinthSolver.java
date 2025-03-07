@@ -213,7 +213,6 @@ public class LabyrinthSolver implements Solver {
     }
 
     private ArrayList<LabyrinthVertex> setDefaultVertexes() {
-        labyrinthModule = new LabyrinthModule();
         var vertexes = new ArrayList<LabyrinthVertex>();
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {

@@ -31,7 +31,7 @@ public class CompWiresSolver implements Solver {
                 result.add(DONT_CUT);
             } else if (conditions.size() == 3) {
                 if (!conditions.contains('s'))
-                    result.add(bomb.isLastDigitOfSerialNumber(false) ? CUT : DONT_CUT);
+                    result.add(bomb.isLastDigitOfSerialNumberEven() ? CUT : DONT_CUT);
                 else if (!conditions.contains('b'))
                     result.add(bomb.getBatteriesCount() > 1 ? CUT : DONT_CUT);
                 else
@@ -40,7 +40,7 @@ public class CompWiresSolver implements Solver {
                 if (conditions.containsAll(List.of('l', 'b')))
                     result.add(bomb.hasPort(PortType.PARALLEL) ? CUT : DONT_CUT);
                 else if (conditions.containsAll(List.of('r', 'b')))
-                    result.add(bomb.isLastDigitOfSerialNumber(false) ? CUT : DONT_CUT);
+                    result.add(bomb.isLastDigitOfSerialNumberEven() ? CUT : DONT_CUT);
                 else if (conditions.containsAll(List.of('s', 'r')))
                     result.add(CUT);
                 else if (conditions.containsAll(List.of('s', 'b')))
@@ -53,7 +53,7 @@ public class CompWiresSolver implements Solver {
                 else if (conditions.contains('l'))
                     result.add(DONT_CUT);
                 else
-                    result.add(bomb.isLastDigitOfSerialNumber(false) ? CUT : DONT_CUT);
+                    result.add(bomb.isLastDigitOfSerialNumberEven() ? CUT : DONT_CUT);
             }
         }
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result.toString()).build();

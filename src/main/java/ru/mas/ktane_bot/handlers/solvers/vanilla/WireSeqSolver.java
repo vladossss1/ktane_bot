@@ -71,7 +71,7 @@ public class WireSeqSolver implements Solver {
         else
             return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
 
-        if (module.getStage() == 3)
+        if (module.getAndIncrementStage() == 3)
             dataCache.solveModule(userId);
 
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();

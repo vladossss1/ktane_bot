@@ -2,12 +2,10 @@ package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.BombModule;
 import ru.mas.ktane_bot.model.modules.vanilla.WhosOnFirstModule;
 
 import java.util.Arrays;
@@ -73,7 +71,7 @@ public class WhosOnFirstSolver implements Solver {
             if (splitted.subList(1, 7).contains(word))
                 result = word;
         }
-        if (module.getStage() == 2) {
+        if (module.getAndIncrementStage() == 2) {
             dataCache.solveModule(userId);
         }
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();

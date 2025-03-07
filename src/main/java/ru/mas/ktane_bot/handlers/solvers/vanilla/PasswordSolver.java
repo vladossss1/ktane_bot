@@ -18,7 +18,7 @@ public class PasswordSolver implements Solver {
     public MessageDto solve(String message, String userId) {
         var letters = message.chars().mapToObj(c -> (char) c).toList();
         var module = (PasswordModule) dataCache.getUserModule(userId);
-        module.setCurrentWords(module.getCurrentWords().stream().filter(w -> letters.contains(w.toCharArray()[module.getStage()])).toList());
+        module.setCurrentWords(module.getCurrentWords().stream().filter(w -> letters.contains(w.toCharArray()[module.getAndIncrementStage()])).toList());
         if (module.getCurrentWords().size() == 1) {
             dataCache.solveModule(userId);
             return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(module.getCurrentWords().get(0)).build();
