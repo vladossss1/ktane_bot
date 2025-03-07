@@ -1,6 +1,7 @@
 package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
@@ -16,50 +17,55 @@ import static ru.mas.ktane_bot.model.CommonValues.*;
 public class WiresSolver implements Solver {
 
     private final DataCache dataCache;
-
     private List<Character> wires;
     private static final String LAST_BLUE = "Последний синий";
     private static final String LAST_RED = "Последний красный";
 
 
+    @SneakyThrows
     @Override
     public MessageDto solve(String message, String userId) {
-        wires = message.chars().mapToObj(c -> (char)c).toList();
+        wires = message.chars().mapToObj(c -> (char) c).toList();
         var bomb = dataCache.getUserBomb(userId);
-        dataCache.solveModule(userId);
-        switch (wires.size()) {
-            case 3:
+        var result = switch (wires.size()) {
+            case 3 -> {
                 if (!wires.contains('r'))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(TWO).build();
+                    yield TWO;
                 else if (lastWire('w') || !moreThanOneWire('b'))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(THREE).build();
+                    yield THREE;
                 else
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(LAST_BLUE).build();
-            case 4:
-                if (moreThanOneWire('r') && bomb.isLastDigit(true))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(LAST_RED).build();
+                    yield LAST_BLUE;
+            }
+            case 4 -> {
+                if (moreThanOneWire('r') && !bomb.isLastDigitOfSerialNumberEven())
+                    yield LAST_RED;
                 else if ((lastWire('y') && noWire('r')) || exactlyOneWire('b'))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(ONE).build();
+                    yield ONE;
                 else if (moreThanOneWire('y'))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(FOUR).build();
+                    yield FOUR;
                 else
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(TWO).build();
-            case 5:
-                if (lastWire('d') && bomb.isLastDigit(true))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(FOUR).build();
+                    yield TWO;
+            }
+            case 5 -> {
+                if (lastWire('d') && !bomb.isLastDigitOfSerialNumberEven())
+                    yield FOUR;
                 else if ((exactlyOneWire('r') && moreThanOneWire('y')) || !noWire('d'))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(ONE).build();
+                    yield ONE;
                 else
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(TWO).build();
-            case 6:
-                if (noWire('y') && bomb.isLastDigit(true))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(THREE).build();
+                    yield TWO;
+            }
+            case 6 -> {
+                if (noWire('y') && !bomb.isLastDigitOfSerialNumberEven())
+                    yield THREE;
                 else if ((exactlyOneWire('y') && moreThanOneWire('w')) || !noWire('r'))
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(FOUR).build();
+                    yield FOUR;
                 else
-                    return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(SIX).build();
-        }
-        return null;
+                    yield SIX;
+            }
+            default -> throw new Exception(); // TODO validate
+        };
+        dataCache.solveModule(userId);
+        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();
     }
 
     private boolean noWire(char color) {
@@ -74,7 +80,7 @@ public class WiresSolver implements Solver {
         return wires.stream().filter(w -> w.equals(color)).count() > 1;
     }
 
-    private boolean lastWire(char color){
+    private boolean lastWire(char color) {
         return wires.getLast().equals(color);
     }
 }

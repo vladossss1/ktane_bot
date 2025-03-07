@@ -6,7 +6,7 @@ import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.WireSeq;
+import ru.mas.ktane_bot.model.modules.vanilla.WireSeqModule;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class WireSeqSolver implements Solver {
 
     @Override
     public MessageDto solve(String message, String userId) {
-        var module = (WireSeq) dataCache.getUserModule(userId);
+        var module = (WireSeqModule) dataCache.getUserModule(userId);
         String result;
         if (message.length() == 2)
             result = calculateCut(message.charAt(0), message.charAt(1), module);
@@ -71,13 +71,13 @@ public class WireSeqSolver implements Solver {
         else
             return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
 
-        if (module.getStateCount() == 3)
+        if (module.getAndIncrementStage() == 3)
             dataCache.solveModule(userId);
 
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();
     }
 
-    private String calculateCut(char color, char letter, WireSeq module) {
+    private String calculateCut(char color, char letter, WireSeqModule module) {
         return switch (color) {
             case 'r' -> red.get(module.getRedCount()).contains(letter) ? CUT : DONT_CUT;
             case 'b' -> blue.get(module.getBlueCount()).contains(letter) ? CUT : DONT_CUT;

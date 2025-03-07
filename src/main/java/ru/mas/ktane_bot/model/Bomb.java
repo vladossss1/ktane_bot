@@ -29,6 +29,8 @@ public class Bomb {
 
     private int portHoldersCount;
 
+    private int emptyPortHoldersCount;
+
     private int modulesCount;
 
     private int solvedModulesCount = 0;
@@ -43,9 +45,9 @@ public class Bomb {
         ports.add(port);
     }
 
-    public boolean isLastDigit(boolean odd) {
-        return serialNumber.chars().mapToObj(ch -> (char)ch).filter(Character::isDigit).reduce((a, b) -> b)
-                .filter(character -> character % 2 == (odd ? 1 : 0)).isPresent();
+    public boolean isLastDigitOfSerialNumberEven() {
+        return serialNumber.chars().mapToObj(ch -> (char) ch).filter(Character::isDigit).reduce((a, b) -> b)
+                .filter(character -> character % 2 == 0).isPresent();
     }
 
     public void solveModule() {
@@ -78,5 +80,9 @@ public class Bomb {
 
     public boolean serialHasSymbol(String pattern) {
         return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(serialNumber).find();
+    }
+
+    public boolean hasPort(PortType port) {
+        return ports.contains(port);
     }
 }

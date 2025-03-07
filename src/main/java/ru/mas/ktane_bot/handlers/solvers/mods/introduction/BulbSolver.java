@@ -8,7 +8,7 @@ import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.Bomb;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.Bulb;
+import ru.mas.ktane_bot.model.modules.mods.introduction.BulbModule;
 
 @Component("bulbSolver")
 @RequiredArgsConstructor
@@ -16,13 +16,13 @@ public class BulbSolver implements Solver {
 
     private final DataCache dataCache;
     private Bomb bomb;
-    private Bulb module;
+    private BulbModule module;
 
     @SneakyThrows
     @Override
     public MessageDto solve(String message, String userId) {
         bomb = dataCache.getUserBomb(userId);
-        module = (Bulb) dataCache.getUserModule(userId);
+        module = (BulbModule) dataCache.getUserModule(userId);
         String desc;
         if (message.equals("y") || message.equals("n")) {
             if (module.getCurrentMethod().getName().matches("step2|step3|step6")) {

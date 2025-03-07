@@ -6,8 +6,8 @@ import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.Labyrinth;
-import ru.mas.ktane_bot.model.modules.LabyrinthVertex;
+import ru.mas.ktane_bot.model.modules.vanilla.LabyrinthModule;
+import ru.mas.ktane_bot.model.LabyrinthVertex;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ import static ru.mas.ktane_bot.model.CommonValues.*;
 @RequiredArgsConstructor
 public class LabyrinthSolver implements Solver {
 
-    private Labyrinth labyrinth = new Labyrinth();
+    private LabyrinthModule labyrinthModule = new LabyrinthModule();
 
     private static final List<List<Integer>> circles = List.of(
             List.of(6, 17),
@@ -72,12 +72,12 @@ public class LabyrinthSolver implements Solver {
                 break;
             }
         }
-        labyrinth.setStart(Arrays.stream(splitted.get(2).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
-        labyrinth.setDestination(Arrays.stream(splitted.get(3).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
+        labyrinthModule.setStart(Arrays.stream(splitted.get(2).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
+        labyrinthModule.setDestination(Arrays.stream(splitted.get(3).split("")).map(Integer::parseInt).reduce((a, b) -> (a - 1) * 6 + b - 1).get());
         var passed = new HashSet<LabyrinthVertex>();
         var path = new LinkedList<LabyrinthVertex>();
-        labyrinth.getPath(labyrinth.getTable().stream().filter(n -> n.getCoordinate() == labyrinth.getStart()).findAny().get(),
-                labyrinth.getTable().stream().filter(n -> n.getCoordinate() == labyrinth.getDestination()).findAny().get(),
+        labyrinthModule.getPath(labyrinthModule.getTable().stream().filter(n -> n.getCoordinate() == labyrinthModule.getStart()).findAny().get(),
+                labyrinthModule.getTable().stream().filter(n -> n.getCoordinate() == labyrinthModule.getDestination()).findAny().get(),
                 passed, path);
         dataCache.solveModule(userId);
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(buildPath(path)).build();
@@ -126,7 +126,7 @@ public class LabyrinthSolver implements Solver {
 
             vertexes.get(i).setNeighbors(neighbors.stream().map(n -> vertexes.stream().filter(v -> n.equals(v.getCoordinate())).findFirst().get()).toList());
         }
-        labyrinth.setTable(vertexes);
+        labyrinthModule.setTable(vertexes);
     }
 
     private void loadFirstLabyrinth() {
@@ -213,7 +213,6 @@ public class LabyrinthSolver implements Solver {
     }
 
     private ArrayList<LabyrinthVertex> setDefaultVertexes() {
-        labyrinth = new Labyrinth();
         var vertexes = new ArrayList<LabyrinthVertex>();
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {

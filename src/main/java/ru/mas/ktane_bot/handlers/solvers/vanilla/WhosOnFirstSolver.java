@@ -2,11 +2,11 @@ package ru.mas.ktane_bot.handlers.solvers.vanilla;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.MessageDto;
 import ru.mas.ktane_bot.model.MessageType;
+import ru.mas.ktane_bot.model.modules.vanilla.WhosOnFirstModule;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,23 +65,15 @@ public class WhosOnFirstSolver implements Solver {
     @Override
     public MessageDto solve(String message, String userId) {
         var splitted = Arrays.stream(message.split(",")).toList();
-        var subState = dataCache.getUsersCurrentBotSubState(userId);
-        switch (subState) {
-            case WHOSONFIRST1:
-                dataCache.setUsersCurrentBotSubState(userId, BotSubState.WHOSONFIRST2);
-                break;
-            case WHOSONFIRST2:
-                dataCache.setUsersCurrentBotSubState(userId, BotSubState.WHOSONFIRST3);
-                break;
-            case WHOSONFIRST3:
-                dataCache.setUsersCurrentBotSubState(userId, null);
-                dataCache.solveModule(userId);
-                break;
-        }
-        for (var word: stepTwo.get(splitted.get(stepOne.get(splitted.get(0))))) {
+        var module = (WhosOnFirstModule) dataCache.getUserModule(userId);
+        String result = "";
+        for (var word : stepTwo.get(splitted.get(stepOne.get(splitted.get(0))))) {
             if (splitted.subList(1, 7).contains(word))
-                return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(word).build();
+                result = word;
         }
-        return null;
+        if (module.getAndIncrementStage() == 2) {
+            dataCache.solveModule(userId);
+        }
+        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();
     }
 }
