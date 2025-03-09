@@ -1,6 +1,6 @@
 package ru.mas.ktane_bot.model.modules.vanilla;
 
-import ru.mas.ktane_bot.model.BombAttribute;
+import ru.mas.ktane_bot.model.bomb.BombAttribute;
 import ru.mas.ktane_bot.model.modules.BombModule;
 
 import java.util.List;

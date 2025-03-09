@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
-import ru.mas.ktane_bot.model.MessageDto;
-import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.PortType;
+import ru.mas.ktane_bot.model.message.MessageDto;
+import ru.mas.ktane_bot.model.message.MessageType;
+import ru.mas.ktane_bot.model.bomb.PortType;
 
 import java.util.List;
 import java.util.StringJoiner;
