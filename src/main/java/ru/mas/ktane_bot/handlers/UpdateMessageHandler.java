@@ -7,17 +7,10 @@ import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.bot.state.BotSubState;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
-import ru.mas.ktane_bot.model.MessageDto;
-import ru.mas.ktane_bot.model.MessageType;
-import ru.mas.ktane_bot.model.modules.mods.introduction.BulbModule;
-import ru.mas.ktane_bot.model.modules.mods.introduction.CrazyTalkModule;
-import ru.mas.ktane_bot.model.modules.mods.introduction.PianoKeysModule;
-import ru.mas.ktane_bot.model.modules.vanilla.KeyboardModule;
-import ru.mas.ktane_bot.model.modules.vanilla.MemoryModule;
-import ru.mas.ktane_bot.model.modules.vanilla.MorseModule;
-import ru.mas.ktane_bot.model.modules.vanilla.SimonSaysModule;
-import ru.mas.ktane_bot.model.modules.vanilla.WhosOnFirstModule;
-import ru.mas.ktane_bot.model.modules.vanilla.WireSeqModule;
+import ru.mas.ktane_bot.model.message.MessageDto;
+import ru.mas.ktane_bot.model.message.MessageType;
+import ru.mas.ktane_bot.model.modules.mods.introduction.*;
+import ru.mas.ktane_bot.model.modules.vanilla.*;
 import ru.mas.ktane_bot.service.CreateBombService;
 
 import java.util.List;
@@ -93,6 +86,7 @@ public class UpdateMessageHandler {
                         return createBombService.createBomb(message, userId);
                     case WIRES:
                         dataCache.setUsersCurrentBotState(userId, BotState.WIRES);
+                        dataCache.saveUserModule(userId, new WiresModule());
                         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
                                 .text("Введите последовательность цветов проводов (Пример - gbbr (green blue blue red)) (b- blue, d - black)").build();
                     case BUTTON:
@@ -113,6 +107,7 @@ public class UpdateMessageHandler {
                                 .text("Вводите на каждом этапе цифры, сначала на экране, потом остальные (пример: 43214)").build();
                     case LABYRINTH:
                         dataCache.setUsersCurrentBotState(userId, BotState.LABYRINTH);
+                        dataCache.saveUserModule(userId, new LabyrinthModule());
                         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
                                 .text("Введите координаты кругов, затем вашего местонахождения, " +
                                         "затем местонахождение финиша в формате рядстолбец рядстолбец(пример: 21 36 44 66) ").build();
@@ -134,9 +129,11 @@ public class UpdateMessageHandler {
                                         "которое на экране, а потом клавиатуру слева направо сверху вниз").build();
                     case PASSWORD:
                         dataCache.setUsersCurrentBotState(userId, BotState.PASSWORD);
+                        dataCache.saveUserModule(userId, new PasswordModule());
                         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Вводите сначала все первые буквы, затем все вторые, пока не получите ответ (Пример: abcdef)").build();
                     case COMPWIRES:
                         dataCache.setUsersCurrentBotState(userId, BotState.COMP_WIRES);
+                        dataCache.saveUserModule(userId, new CompWiresModule());
                         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
                                 .text("Введите все провода через пробел " +
                                         "(пример: rbsl, где r - красный, b - синий, s - звезда, l - светодиод, _ - просто белый провод)").build();
@@ -147,6 +144,7 @@ public class UpdateMessageHandler {
                                 "d - черный, b - синий, r - красный, a - A, b - Б, c - В, если проводов нет, то _").build();
                     case EMOJI_MATH:
                         dataCache.setUsersCurrentBotState(userId, BotState.EMOJI_MATH);
+                        dataCache.saveUserModule(userId, new EmojiMathModule());
                         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите выражение:").build();
                     case CRAZY_TALK:
                         dataCache.setUsersCurrentBotState(userId, BotState.CRAZY_TALK);
@@ -154,6 +152,7 @@ public class UpdateMessageHandler {
                         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите первое слово").build();
                     case LETTER_KEYS:
                         dataCache.setUsersCurrentBotState(userId, BotState.LETTER_KEYS);
+                        dataCache.saveUserModule(userId, new LetterKeysModule());
                         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text("Введите ваше число").build();
                     case BULB:
                         dataCache.setUsersCurrentBotState(userId, BotState.BULB);
@@ -169,6 +168,18 @@ public class UpdateMessageHandler {
                                         "Отправьте 3 стикера из стикерпака ниже, совпадающих с клавишами на экране",
                                         "https://t.me/addstickers/Ktane_PianoKeys"
                                 )).build();
+                    case CONNECTION_CHECK:
+                        dataCache.setUsersCurrentBotState(userId, BotState.CONNECTION_CHECK);
+                        dataCache.saveUserModule(userId, new ConnectionCheckModule());
+                        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
+                                .text("Введите все восемь цифр:").build();
+                    case TWO_BITS:
+                        dataCache.setUsersCurrentBotState(userId, BotState.TWO_BITS);
+                        state = dataCache.getUsersCurrentBotState(userId);
+                        dataCache.saveUserModule(userId, new TwoBitsModule());
+                        return MessageDto.builder().messageType(MessageType.TEXT_LIST).userId(userId)
+                                .texts(List.of("Введите две буквы на бомбе, после этого присылайте по две цифры и следуйте указаниям"
+                                        ,solverMap.get(state.getSolverBeanName()).solve(message, userId).getText())).build();
                 }
                 break;
             default:

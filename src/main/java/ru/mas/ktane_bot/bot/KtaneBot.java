@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.mas.ktane_bot.handlers.UpdateMessageHandler;
 import ru.mas.ktane_bot.service.CreateMessageService;
-import ru.mas.ktane_bot.model.MessageDto;
+import ru.mas.ktane_bot.model.message.MessageDto;
 
 @Component
 public class KtaneBot extends TelegramLongPollingBot {

@@ -25,4 +25,6 @@ public interface Command {
     String LETTER_KEYS = "/letterkeys";
     String BULB = "/bulb";
     String PIANO_KEYS = "/pianokeys";
+    String CONNECTION_CHECK = "/connectioncheck";
+    String TWO_BITS = "/twobits";
 }

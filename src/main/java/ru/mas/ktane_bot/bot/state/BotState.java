@@ -23,7 +23,9 @@ public enum BotState {
     CRAZY_TALK ("crazyTalkSolver"),
     LETTER_KEYS("letterKeysSolver"),
     BULB("bulbSolver"),
-    PIANO_KEYS("pianoKeysSolver");
+    PIANO_KEYS("pianoKeysSolver"),
+    CONNECTION_CHECK("connectionCheckSolver"),
+    TWO_BITS("twoBitsSolver");
 
     private final String solverBeanName;
 }
