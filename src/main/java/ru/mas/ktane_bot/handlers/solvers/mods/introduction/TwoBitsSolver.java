@@ -23,7 +23,7 @@ public class TwoBitsSolver implements Solver {
         var bomb = dataCache.getUserBomb(userId);
         var module = (TwoBitsModule) dataCache.getUserModule(userId);
         var result = switch (module.getStage()) {
-            case 0:
+            case 0 -> {
                 module.nextStage();
                 var temp = 0;
                 if (bomb.serialHasSymbol(".*[a-z].*"))
@@ -39,12 +39,15 @@ public class TwoBitsSolver implements Solver {
                     yield module.getMatrix().get(0).get(stringTemp.charAt(0) - '0') + " " + QUERY;
                 else
                     yield module.getMatrix().get(stringTemp.charAt(0) - '0').get(stringTemp.charAt(1) - '0') + " " + QUERY;
-            case 3:
+            }
+            case 3 -> {
                 dataCache.solveModule(userId);
                 yield module.getMatrix().get(message.charAt(0) - '0').get(message.charAt(1) - '0') + " " + SUBMIT;
-            default:
+            }
+            default -> {
                 module.nextStage();
                 yield module.getMatrix().get(message.charAt(0) - '0').get(message.charAt(1) - '0') + " " + QUERY;
+            }
         };
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();
     }

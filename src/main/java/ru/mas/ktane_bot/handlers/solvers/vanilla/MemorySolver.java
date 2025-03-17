@@ -21,8 +21,6 @@ public class MemorySolver implements Solver {
 
     private final DataCache dataCache;
 
-    private static final String PRESS = "Нажмите на ";
-
     @SneakyThrows
     @Override
     public MessageDto solve(String message, String userId) {

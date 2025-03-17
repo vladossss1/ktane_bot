@@ -41,7 +41,7 @@ public class UserDataCache implements DataCache{
     }
 
     @Override
-    public boolean hasUser(String userId) {
+    public boolean hasState(String userId) {
         return usersBotStates.containsKey(userId);
     }
 

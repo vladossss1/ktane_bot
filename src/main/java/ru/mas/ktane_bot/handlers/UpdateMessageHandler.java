@@ -9,6 +9,7 @@ import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
 import ru.mas.ktane_bot.model.message.MessageDto;
 import ru.mas.ktane_bot.model.message.MessageType;
+import ru.mas.ktane_bot.model.modules.listening.ListeningButtons;
 import ru.mas.ktane_bot.model.modules.mods.introduction.*;
 import ru.mas.ktane_bot.model.modules.vanilla.*;
 import ru.mas.ktane_bot.service.CreateBombService;
@@ -29,19 +30,24 @@ public class UpdateMessageHandler {
     private final Map<String, Solver> solverMap;
 
     public MessageDto handle(Update update) {
-        if (!update.hasMessage() || (!update.getMessage().hasText() && !update.getMessage().hasSticker())) {
-            return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
+
+        var message = "";
+        var userId = "";
+        if (update.hasCallbackQuery()) {
+            message = update.getCallbackQuery().getData();
+            userId = String.valueOf(update.getCallbackQuery().getFrom().getId());
+            dataCache.getUserModule(userId).setMessageWithKeyboardId(update.getCallbackQuery().getMessage().getMessageId());
+        } else {
+            userId = String.valueOf(update.getMessage().getChatId());
+            if (update.getMessage().hasText())
+                message = update.getMessage().getText();
+            else if (update.getMessage().hasSticker())
+                message = update.getMessage().getSticker().getFileId();
+            else
+                return MessageDto.builder().messageType(MessageType.NO_MESSAGE).build();
         }
 
-        String message = "";
-        if (update.getMessage().hasText())
-            message = update.getMessage().getText();
-        else if (update.getMessage().hasSticker())
-            message = update.getMessage().getSticker().getFileId();
-
-        var userId = String.valueOf(update.getMessage().getChatId());
-
-        if (!dataCache.hasUser(userId))
+        if (!dataCache.hasState(userId))
             dataCache.setUsersCurrentBotState(userId, BotState.DEFAULT);
 
         var state = dataCache.getUsersCurrentBotState(userId);
@@ -96,7 +102,7 @@ public class UpdateMessageHandler {
                         dataCache.setUsersCurrentBotState(userId, BotState.KEYBOARD);
                         dataCache.saveUserModule(userId, new KeyboardModule());
                         return MessageDto.builder()
-                                        .messageType(MessageType.TEXT_LIST).userId(userId).texts(List.of(
+                                .messageType(MessageType.TEXT_LIST).userId(userId).texts(List.of(
                                         "Отправьте 4 стикера из стикерпака ниже, совпадающих с клавишами на вашей клавиатуре",
                                         "https://t.me/addstickers/Ktane_Keyboard"
                                 )).build();
@@ -179,7 +185,49 @@ public class UpdateMessageHandler {
                         dataCache.saveUserModule(userId, new TwoBitsModule());
                         return MessageDto.builder().messageType(MessageType.TEXT_LIST).userId(userId)
                                 .texts(List.of("Введите две буквы на бомбе, после этого присылайте по две цифры и следуйте указаниям"
-                                        ,solverMap.get(state.getSolverBeanName()).solve(message, userId).getText())).build();
+                                        , solverMap.get(state.getSolverBeanName()).solve(message, userId).getText())).build();
+                    case CODE:
+                        dataCache.setUsersCurrentBotState(userId, BotState.CODE);
+                        dataCache.saveUserModule(userId, new CodeModule());
+                        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
+                                .text("Введите число с экрана").build();
+                    case LISTENING:
+                        dataCache.setUsersCurrentBotState(userId, BotState.LISTENING);
+                        dataCache.saveUserModule(userId, new ListeningModule());
+                        return MessageDto.builder().messageType(MessageType.TEXT_WITH_KEYBOARD).userId(userId)
+                                .text("Нажмите на клавиатуре на звук, который услышали")
+                                .inlineKeyboard(ListeningButtons.getInlineKeyboard()).build();
+                    case SWITCHES:
+                        dataCache.setUsersCurrentBotState(userId, BotState.SWITCHES);
+                        dataCache.saveUserModule(userId, new SwitchesModule());
+                        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
+                                .text("Введите положения переключателей и положения, в которые нужно прийти в формате:" +
+                                        " \"uuuuu ddddd\", где u - поднят, d- опущен").build();
+                    case ASTROLOGY:
+                        dataCache.setUsersCurrentBotState(userId, BotState.ASTROLOGY);
+                        dataCache.saveUserModule(userId, new AstrologyModule());
+                        return MessageDto.builder()
+                                .messageType(MessageType.TEXT_LIST).userId(userId).texts(List.of(
+                                        "Отправьте 3 стикера из стикерпака ниже, совпадающих с картинками на экране",
+                                        "https://t.me/addstickers/Ktane_Astrology"
+                                )).build();
+                    case SHAPE_SHIFT:
+                        dataCache.setUsersCurrentBotState(userId, BotState.SHAPE_SHIFT);
+                        dataCache.saveUserModule(userId, new ShapeShiftModule());
+                        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
+                                .text("Введите через пробел левую и правую часть фигуры. (Пример: \"ticket circle\"," +
+                                        " варианты: ticket, circle, triangle, rectangle)").build();
+                    case PRESS_X:
+                        dataCache.setUsersCurrentBotState(userId, BotState.PRESS_X);
+                        state = dataCache.getUsersCurrentBotState(userId);
+                        dataCache.saveUserModule(userId, new PressXModule());
+                        return solverMap.get(state.getSolverBeanName()).solve(message, userId);
+                    case COLOUR_FLASH:
+                        dataCache.setUsersCurrentBotState(userId, BotState.COLOUR_FLASH);
+                        dataCache.saveUserModule(userId, new ColourFlashModule());
+                        return MessageDto.builder().messageType(MessageType.TEXT).userId(userId)
+                                .text("Cначала введите все цвета слов, а потом сами слова через пробел. Пример: rygbbmwm mbwrygbm" +
+                                        "(Возможные цвета: r - красный, y - желтый, g - зеленый, b - синий, m - розовый, w - белый").build();
                 }
                 break;
             default:

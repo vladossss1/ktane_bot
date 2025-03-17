@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConnectionCheckModule extends BombModule {
-    Map<Integer, List<Integer>> nodes;
+    private Map<Integer, List<Integer>> nodes;
 
     public ConnectionCheckModule() {
         super(List.of(BombAttribute.SERIALNUMBER, BombAttribute.BATTERIES));

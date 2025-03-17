@@ -56,6 +56,7 @@ public class CompWiresSolver implements Solver {
                     result.add(bomb.isLastDigitOfSerialNumberEven() ? CUT : DONT_CUT);
             }
         }
+        dataCache.solveModule(userId);
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result.toString()).build();
     }
 }

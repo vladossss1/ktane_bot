@@ -6,7 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum BotState {
-    DEFAULT (null),
     CREATE_BOMB (null),
     WIRES ("wiresSolver"),
     BUTTON ("buttonsSolver"),
@@ -25,7 +24,15 @@ public enum BotState {
     BULB("bulbSolver"),
     PIANO_KEYS("pianoKeysSolver"),
     CONNECTION_CHECK("connectionCheckSolver"),
-    TWO_BITS("twoBitsSolver");
+    TWO_BITS("twoBitsSolver"),
+    CODE("codeSolver"),
+    LISTENING("listeningSolver"),
+    SWITCHES("switchesSolver"),
+    ASTROLOGY("astrologySolver"),
+    SHAPE_SHIFT("shapeShiftSolver"),
+    PRESS_X("pressXSolver"),
+    COLOUR_FLASH("colourFlashSolver"),
+    DEFAULT (null);
 
     private final String solverBeanName;
 }

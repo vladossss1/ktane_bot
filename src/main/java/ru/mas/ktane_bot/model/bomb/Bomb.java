@@ -88,10 +88,18 @@ public class Bomb {
     }
 
     public char getFirstLetter() {
-        return serialNumber.chars().mapToObj(ch -> (char) ch).filter(Character::isLetter).toList().getFirst();
+        return (char) serialNumber.chars().filter(Character::isLetter).findFirst().orElseThrow();
     }
 
     public int getLastDigit() {
-        return serialNumber.chars().mapToObj(ch -> (char) ch).filter(Character::isDigit).map(c -> c - '0').toList().getLast();
+        return serialNumber.chars().filter(Character::isDigit).map(c -> c - '0').boxed().toList().getLast();
+    }
+
+    public int getFirstDigit() {
+        return serialNumber.chars().filter(Character::isDigit).map(c -> c - '0').boxed().toList().getFirst();
+    }
+
+    public long getIndicatorCount(boolean lit) {
+        return indicators.stream().filter(i -> i.getLit() == lit).count();
     }
 }

@@ -27,4 +27,11 @@ public interface Command {
     String PIANO_KEYS = "/pianokeys";
     String CONNECTION_CHECK = "/connectioncheck";
     String TWO_BITS = "/twobits";
+    String CODE = "/code";
+    String LISTENING = "/listening";
+    String SWITCHES = "/switches";
+    String ASTROLOGY = "/astrology";
+    String SHAPE_SHIFT = "/shapeshift";
+    String PRESS_X = "/pressx";
+    String COLOUR_FLASH = "/colourflash";
 }

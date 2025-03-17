@@ -50,7 +50,7 @@ public class CrazyTalkModule extends BombModule {
             Map.entry("ONE THREE TWO FOUR", "3/7"),
             Map.entry("IT’S SHOWING NOTHING", "2/3"),
             Map.entry("LIMA ECHO FOXTROT TANGO SPACE ALPHA ROMEO ROMEO OSCAR RISKY SPACE SIERRA YANKEE MIKE BRAVO OSCAR LIMA", "1/2"),
-            Map.entry("ONE 2 3 4", "3/4"),
+            Map.entry("ONE 3 2 4", "3/4"),
             Map.entry("STOP.", "7/4"),
             Map.entry(".PERIOD", "8/1"),
             Map.entry("NO REALLY STOP", "5/1"),

@@ -3,6 +3,7 @@ package ru.mas.ktane_bot.service;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import ru.mas.ktane_bot.model.message.MessageDto;
 
 import java.util.ArrayList;
@@ -25,9 +26,19 @@ public class CreateMessageService {
         return stickers;
     }
 
-    public List<SendMessage> creatTextMessageList(MessageDto messageDto) {
+    public List<SendMessage> createTextMessageList(MessageDto messageDto) {
         var messages = new ArrayList<SendMessage>();
         messageDto.getTexts().forEach(t -> messages.add(new SendMessage(messageDto.getUserId(), t)));
         return messages;
+    }
+
+    public SendMessage createTextMessageWithInlineKeyboard(MessageDto messageDto) {
+        return SendMessage.builder().chatId(messageDto.getUserId())
+                .text(messageDto.getText()).replyMarkup(messageDto.getInlineKeyboard()).build();
+    }
+
+    public EditMessageText editTextMessage(MessageDto messageDto) {
+        return EditMessageText.builder().chatId(messageDto.getUserId())
+                .messageId(messageDto.getMessageId()).text(messageDto.getText()).build();
     }
 }

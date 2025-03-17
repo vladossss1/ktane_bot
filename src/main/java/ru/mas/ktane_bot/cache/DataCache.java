@@ -14,7 +14,7 @@ public interface DataCache {
 
     void saveUserBomb(String userId, Bomb bomb);
 
-    boolean hasUser(String userId);
+    boolean hasState(String userId);
 
     void setUsersCurrentBotSubState(String userId, BotSubState botSubState);
 
