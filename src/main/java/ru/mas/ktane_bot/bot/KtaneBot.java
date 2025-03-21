@@ -3,11 +3,14 @@ package ru.mas.ktane_bot.bot;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.mas.ktane_bot.handlers.UpdateMessageHandler;
+import ru.mas.ktane_bot.handlers.solvers.mods.introduction.SwitchesSolver;
+import ru.mas.ktane_bot.model.message.MessageDto;
+import ru.mas.ktane_bot.model.message.MessageType;
 import ru.mas.ktane_bot.service.CreateMessageService;
-import ru.mas.ktane_bot.model.MessageDto;
 
 @Component
 public class KtaneBot extends TelegramLongPollingBot {
@@ -23,7 +26,7 @@ public class KtaneBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        MessageDto preparedMessage = updateMessageHandler.handle(update);
+        var preparedMessage = updateMessageHandler.handle(update);
         sendMessage(preparedMessage);
     }
 
@@ -49,8 +52,16 @@ public class KtaneBot extends TelegramLongPollingBot {
                     break;
                 }
                 case TEXT_LIST: {
-                    for (var text : createMessageService.creatTextMessageList(messageDto))
+                    for (var text : createMessageService.createTextMessageList(messageDto))
                         execute(text);
+                    break;
+                }
+                case TEXT_WITH_KEYBOARD: {
+                    execute(createMessageService.createTextMessageWithInlineKeyboard(messageDto));
+                    break;
+                }
+                case EDIT_TEXT: {
+                    execute(createMessageService.editTextMessage(messageDto));
                     break;
                 }
             }

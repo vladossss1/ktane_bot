@@ -5,8 +5,8 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
-import ru.mas.ktane_bot.model.MessageDto;
-import ru.mas.ktane_bot.model.MessageType;
+import ru.mas.ktane_bot.model.message.MessageDto;
+import ru.mas.ktane_bot.model.message.MessageType;
 
 import java.util.List;
 
@@ -22,7 +22,6 @@ public class WiresSolver implements Solver {
     private static final String LAST_RED = "Последний красный";
 
 
-    @SneakyThrows
     @Override
     public MessageDto solve(String message, String userId) {
         wires = message.chars().mapToObj(c -> (char) c).toList();
@@ -62,7 +61,7 @@ public class WiresSolver implements Solver {
                 else
                     yield SIX;
             }
-            default -> throw new Exception(); // TODO validate
+            default -> throw new RuntimeException(); // TODO validate
         };
         dataCache.solveModule(userId);
         return MessageDto.builder().messageType(MessageType.TEXT).userId(userId).text(result).build();

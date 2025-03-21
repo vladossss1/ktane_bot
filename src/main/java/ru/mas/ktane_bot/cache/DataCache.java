@@ -2,7 +2,7 @@ package ru.mas.ktane_bot.cache;
 
 import ru.mas.ktane_bot.bot.state.BotState;
 import ru.mas.ktane_bot.bot.state.BotSubState;
-import ru.mas.ktane_bot.model.Bomb;
+import ru.mas.ktane_bot.model.bomb.Bomb;
 import ru.mas.ktane_bot.model.modules.BombModule;
 
 public interface DataCache {
@@ -14,7 +14,7 @@ public interface DataCache {
 
     void saveUserBomb(String userId, Bomb bomb);
 
-    boolean hasUser(String userId);
+    boolean hasState(String userId);
 
     void setUsersCurrentBotSubState(String userId, BotSubState botSubState);
 

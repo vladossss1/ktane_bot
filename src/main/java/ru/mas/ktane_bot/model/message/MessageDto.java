@@ -1,9 +1,10 @@
-package ru.mas.ktane_bot.model;
+package ru.mas.ktane_bot.model.message;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public class MessageDto {
     InputFile sticker;
     List<InputFile> stickers;
     MessageType messageType;
+    InlineKeyboardMarkup inlineKeyboard;
+    Integer messageId;
 }

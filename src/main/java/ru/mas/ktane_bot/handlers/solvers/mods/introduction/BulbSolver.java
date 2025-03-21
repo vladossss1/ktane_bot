@@ -5,9 +5,9 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import ru.mas.ktane_bot.cache.DataCache;
 import ru.mas.ktane_bot.handlers.solvers.Solver;
-import ru.mas.ktane_bot.model.Bomb;
-import ru.mas.ktane_bot.model.MessageDto;
-import ru.mas.ktane_bot.model.MessageType;
+import ru.mas.ktane_bot.model.bomb.Bomb;
+import ru.mas.ktane_bot.model.message.MessageDto;
+import ru.mas.ktane_bot.model.message.MessageType;
 import ru.mas.ktane_bot.model.modules.mods.introduction.BulbModule;
 
 @Component("bulbSolver")

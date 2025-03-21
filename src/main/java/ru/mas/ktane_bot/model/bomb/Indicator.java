@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.model;
+package ru.mas.ktane_bot.model.bomb;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

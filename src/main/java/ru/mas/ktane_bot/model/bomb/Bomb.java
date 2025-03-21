@@ -1,4 +1,4 @@
-package ru.mas.ktane_bot.model;
+package ru.mas.ktane_bot.model.bomb;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +7,7 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -84,5 +85,21 @@ public class Bomb {
 
     public boolean hasPort(PortType port) {
         return ports.contains(port);
+    }
+
+    public char getFirstLetter() {
+        return (char) serialNumber.chars().filter(Character::isLetter).findFirst().orElseThrow();
+    }
+
+    public int getLastDigit() {
+        return serialNumber.chars().filter(Character::isDigit).map(c -> c - '0').boxed().toList().getLast();
+    }
+
+    public int getFirstDigit() {
+        return serialNumber.chars().filter(Character::isDigit).map(c -> c - '0').boxed().toList().getFirst();
+    }
+
+    public long getIndicatorCount(boolean lit) {
+        return indicators.stream().filter(i -> i.getLit() == lit).count();
     }
 }
